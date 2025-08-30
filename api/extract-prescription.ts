@@ -160,7 +160,7 @@ async function extractPrescriptionData(transcript: string): Promise<Prescription
   }
 }
 
-export default async function handler(
+module.exports = async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
