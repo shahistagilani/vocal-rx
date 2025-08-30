@@ -298,7 +298,7 @@ ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN')} or
         <section className="container mx-auto px-6 pb-32">
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-semibold text-slate-800">Structured Prescription</h2>
+              <h2 className="text-2xl font-semibold text-slate-800">Prescription</h2>
             </div>
             <div className="bg-white rounded-lg shadow-lg p-6 space-y-6">
               {/* Clinic Header */}
@@ -367,15 +367,13 @@ ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN')} or
                       <span className="font-medium text-slate-700">Name:</span>
                       <span className="ml-2 text-slate-800">{staticData.patient_name}</span>
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <span className="font-medium text-slate-700">Age:</span>
-                        <span className="ml-2 text-slate-800">{staticData.patient_age}</span>
-                      </div>
-                      <div>
-                        <span className="font-medium text-slate-700">Gender:</span>
-                        <span className="ml-2 text-slate-800">{staticData.patient_gender}</span>
-                      </div>
+                    <div>
+                      <span className="font-medium text-slate-700">Age:</span>
+                      <span className="ml-2 text-slate-800">{staticData.patient_age}</span>
+                    </div>
+                    <div>
+                      <span className="font-medium text-slate-700">Gender:</span>
+                      <span className="ml-2 text-slate-800">{staticData.patient_gender}</span>
                     </div>
                   </div>
                   <div className="space-y-2">
