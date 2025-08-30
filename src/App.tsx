@@ -13,6 +13,7 @@ function App() {
   const [isExtracting, setIsExtracting] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [editedData, setEditedData] = useState<any>(null)
+  const [hasExtracted, setHasExtracted] = useState(false)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioChunksRef = useRef<Blob[]>([])
 
@@ -66,11 +67,8 @@ Plan:
 - Nitroglycerin PRN for chest pain
 - Follow up in 1 week`
       
-      setTranscript(dummyTranscript)
+      setTranscript(prev => prev ? prev + '\n\n' + dummyTranscript : dummyTranscript)
       setIsProcessing(false)
-      
-      // Extract prescription data
-      await extractPrescriptionData(dummyTranscript)
     } catch (error) {
       console.error('Error uploading audio:', error)
       setIsProcessing(false)
@@ -97,12 +95,21 @@ Plan:
           const data = await response.json()
     setPrescriptionData(data)
     setEditedData(data) // Initialize edited data with extracted data
+    setHasExtracted(true)
     } catch (error) {
       console.error('Error extracting prescription:', error)
       alert('Error extracting prescription data. Please try again.')
     } finally {
       setIsExtracting(false)
     }
+  }
+
+  const clearTranscript = () => {
+    setTranscript('')
+    setPrescriptionData(null)
+    setEditedData(null)
+    setHasExtracted(false)
+    setIsEditing(false)
   }
 
   const handleEdit = () => {
@@ -181,12 +188,23 @@ Plan:
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-semibold text-slate-800">Transcript</h2>
-              {isExtracting && (
-                <div className="flex items-center gap-2 text-sm text-slate-600">
-                  <div className="h-4 w-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
-                  Extracting prescription data...
-                </div>
-              )}
+              <div className="flex items-center gap-3">
+                {isExtracting && (
+                  <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <div className="h-4 w-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+                    Extracting prescription data...
+                  </div>
+                )}
+                <Button
+                  onClick={clearTranscript}
+                  variant="outline"
+                  size="sm"
+                  className="text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
+                >
+                  <X className="h-4 w-4 mr-1" />
+                  Clear
+                </Button>
+              </div>
             </div>
             <Textarea
               value={transcript}
@@ -209,7 +227,7 @@ Plan:
       )}
 
       {/* Prescription Data Display */}
-      {prescriptionData && (
+      {prescriptionData && hasExtracted && (
         <section className="container mx-auto px-6 pb-32">
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center justify-between mb-6">
