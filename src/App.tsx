@@ -105,9 +105,6 @@ Plan:
 
   const clearTranscript = () => {
     setTranscript('')
-    setPrescriptionData(null)
-    setEditedData(null)
-    setHasExtracted(false)
   }
 
   const handleFieldChange = (field: string, value: any) => {
