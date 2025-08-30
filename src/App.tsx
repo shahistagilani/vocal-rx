@@ -1,7 +1,7 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import { Mic, MicOff, Square } from 'lucide-react'
+import { Mic, Square } from 'lucide-react'
 import { useState, useRef } from 'react'
 
 function App() {
@@ -44,7 +44,7 @@ function App() {
     }
   }
 
-  const uploadAudio = async (audioBlob: Blob) => {
+  const uploadAudio = async (_audioBlob: Blob) => {
     try {
       // Simulate server upload and processing
       await new Promise(resolve => setTimeout(resolve, 2000))
