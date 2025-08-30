@@ -10,10 +10,38 @@ function App() {
   const [transcript, setTranscript] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
   const [prescriptionData, setPrescriptionData] = useState<any>(null)
-  const [isExtracting, setIsExtracting] = useState(false)
   const [editedData, setEditedData] = useState<any>(null)
   const [hasExtracted, setHasExtracted] = useState(false)
+  const [isExtracting, setIsExtracting] = useState(false)
   const [showTranscript, setShowTranscript] = useState(false)
+  
+  // Static prefilled data (Parts 1-3: Doctor, Clinic, Patient, Vitals)
+  const staticData = {
+    // Part 1: Doctor & Clinic Details (static per doctor)
+    clinic_name: "Heart Care Clinic",
+    clinic_tagline: "Comprehensive Cardiac Care",
+    doctor_name: "Dr. Sarah Johnson",
+    doctor_qualification: "MBBS, MD (Cardiology)",
+    doctor_reg_no: "MH12345",
+    clinic_address: "123 Medical Street, Mumbai 400001",
+    clinic_timings: "9 AM - 6 PM, Closed on Sundays",
+    clinic_phone: "+91-9876543210",
+    
+    // Part 2: Patient Profile (from appointment system)
+    patient_id: "P001234",
+    patient_name: "John Doe",
+    patient_age: "45",
+    patient_gender: "Male",
+    patient_phone: "+91-9876543211",
+    prescription_date: new Date().toLocaleDateString('en-IN'),
+    
+    // Part 3: Other Department Contributions (vitals, investigations)
+    vitals_temp: "98.6°F",
+    vitals_bp: "140/90 mmHg",
+    vitals_height: "5'8\"",
+    vitals_weight: "70kg",
+    prescribed_investigations: ["ECG", "Cardiac enzymes", "Chest X-ray"]
+  }
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioChunksRef = useRef<Blob[]>([])
 
@@ -55,33 +83,26 @@ function App() {
       // Simulate server upload and processing
       await new Promise(resolve => setTimeout(resolve, 2000))
       
-      // Dummy transcript for comprehensive prescription template
-      const dummyTranscript = `Doctor: Dr. Sarah Johnson, MBBS, MD (Cardiology), Reg No: MH12345
-Clinic: Heart Care Clinic, 123 Medical Street, Mumbai 400001
-Timings: 9 AM - 6 PM, Closed on Sundays, Phone: +91-9876543210
+      // Part 4: Doctor's unique contribution per visit (voice captured)
+      const dummyTranscript = `Chief Complaint: Chest pain and shortness of breath for the past 2 days
 
-Patient ID: P001234
-Patient: John Doe, 45 years old, Male, Phone: +91-9876543211
-Date: ${new Date().toLocaleDateString('en-IN')}
+History of Present Illness: Patient reports substernal chest pain, worse with exertion, associated with mild shortness of breath. No radiation to arms or jaw. No nausea or diaphoresis.
 
-Vitals: Temp 98.6°F, BP 140/90 mmHg, Height 5'8", Weight 70kg
+Clinical Findings: Mild chest discomfort on exertion, no resting pain. Heart sounds normal, no murmurs. Lungs clear bilaterally.
 
-Chief Complaint: Chest pain and shortness of breath
-Clinical Findings: Mild chest discomfort on exertion, no resting pain
-Prescribed Investigation: ECG, Cardiac enzymes, Chest X-ray
-Diagnosis: Possible angina, rule out MI
+Diagnosis: Possible stable angina, rule out myocardial infarction
 
 Rx Medicines:
 1. Aspirin 75mg - Once daily - 30 days
-2. Atorvastatin 20mg - Once daily at bedtime - 30 days
+2. Atorvastatin 20mg - Once daily at bedtime - 30 days  
 3. Metoprolol 25mg - Twice daily - 30 days
 
 Advice:
-Diet: Low salt, low fat diet, avoid fried foods
-Exercise: Light walking 30 minutes daily, avoid strenuous activity
-Sleep: 7-8 hours adequate sleep
+Diet: Low salt, low fat diet, avoid fried foods, increase omega-3 rich foods
+Exercise: Light walking 30 minutes daily, avoid strenuous activity until follow-up
+Sleep: 7-8 hours adequate sleep, elevate head if experiencing chest discomfort
 
-Follow-up: ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN')}`
+Follow-up: ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN')} or sooner if symptoms worsen`
       
       setTranscript(prev => prev ? prev + '\n\n' + dummyTranscript : dummyTranscript)
       setShowTranscript(true)
@@ -231,24 +252,25 @@ Follow-up: ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('
               <p className="text-sm text-slate-500">Click any field to edit</p>
             </div>
             <div className="bg-white rounded-lg shadow-lg p-6 space-y-6">
+              {/* Header Note */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                <p className="text-sm text-blue-800">
+                  <span className="font-medium">Parts 1-3 (Static):</span> Doctor, Clinic, Patient & Vitals info pre-filled from records.
+                  <span className="font-medium ml-2">Part 4 (Voice):</span> Doctor's clinical assessment captured via speech.
+                </p>
+              </div>
               {/* Clinic Header */}
               <div className="border-b pb-4 mb-6">
                 <div className="text-center">
                   <div className="w-16 h-16 bg-blue-100 rounded-full mx-auto mb-3 flex items-center justify-center">
                     <span className="text-2xl font-bold text-blue-600">🏥</span>
                   </div>
-                  <Input
-                    value={editedData?.clinic_name || prescriptionData.clinic_name || ''}
-                    onChange={(e) => handleFieldChange('clinic_name', e.target.value)}
-                    placeholder="Clinic Name"
-                    className="text-xl font-bold text-center border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors mb-2"
-                  />
-                  <Input
-                    value={editedData?.clinic_tagline || prescriptionData.clinic_tagline || ''}
-                    onChange={(e) => handleFieldChange('clinic_tagline', e.target.value)}
-                    placeholder="Clinic Tagline"
-                    className="text-sm text-center border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
-                  />
+                  <div className="text-xl font-bold text-center mb-2 text-slate-800">
+                    {staticData.clinic_name}
+                  </div>
+                  <div className="text-sm text-center text-slate-600">
+                    {staticData.clinic_tagline}
+                  </div>
                 </div>
               </div>
 
@@ -259,30 +281,15 @@ Follow-up: ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('
                   <div className="space-y-2">
                     <div>
                       <span className="font-medium text-slate-700">Name:</span>
-                      <Input
-                        value={editedData?.doctor_name || prescriptionData.doctor_name || ''}
-                        onChange={(e) => handleFieldChange('doctor_name', e.target.value)}
-                        placeholder="Dr. Name"
-                        className="ml-2 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
-                      />
+                      <span className="ml-2 text-slate-800">{staticData.doctor_name}</span>
                     </div>
                     <div>
                       <span className="font-medium text-slate-700">Qualification:</span>
-                      <Input
-                        value={editedData?.doctor_qualification || prescriptionData.doctor_qualification || ''}
-                        onChange={(e) => handleFieldChange('doctor_qualification', e.target.value)}
-                        placeholder="MBBS, MD"
-                        className="ml-2 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
-                      />
+                      <span className="ml-2 text-slate-800">{staticData.doctor_qualification}</span>
                     </div>
                     <div>
                       <span className="font-medium text-slate-700">Registration No:</span>
-                      <Input
-                        value={editedData?.doctor_reg_no || prescriptionData.doctor_reg_no || ''}
-                        onChange={(e) => handleFieldChange('doctor_reg_no', e.target.value)}
-                        placeholder="Medical Registration Number"
-                        className="ml-2 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
-                      />
+                      <span className="ml-2 text-slate-800">{staticData.doctor_reg_no}</span>
                     </div>
                   </div>
                 </div>
@@ -291,30 +298,15 @@ Follow-up: ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('
                   <div className="space-y-2">
                     <div>
                       <span className="font-medium text-slate-700">Address:</span>
-                      <Input
-                        value={editedData?.clinic_address || prescriptionData.clinic_address || ''}
-                        onChange={(e) => handleFieldChange('clinic_address', e.target.value)}
-                        placeholder="Clinic Address"
-                        className="ml-2 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
-                      />
+                      <span className="ml-2 text-slate-800">{staticData.clinic_address}</span>
                     </div>
                     <div>
                       <span className="font-medium text-slate-700">Timings:</span>
-                      <Input
-                        value={editedData?.clinic_timings || prescriptionData.clinic_timings || ''}
-                        onChange={(e) => handleFieldChange('clinic_timings', e.target.value)}
-                        placeholder="9 AM - 6 PM, Closed on Sundays"
-                        className="ml-2 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
-                      />
+                      <span className="ml-2 text-slate-800">{staticData.clinic_timings}</span>
                     </div>
                     <div>
                       <span className="font-medium text-slate-700">Phone:</span>
-                      <Input
-                        value={editedData?.clinic_phone || prescriptionData.clinic_phone || ''}
-                        onChange={(e) => handleFieldChange('clinic_phone', e.target.value)}
-                        placeholder="Phone Numbers"
-                        className="ml-2 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
-                      />
+                      <span className="ml-2 text-slate-800">{staticData.clinic_phone}</span>
                     </div>
                   </div>
                 </div>
@@ -327,61 +319,31 @@ Follow-up: ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('
                   <div className="space-y-2">
                     <div>
                       <span className="font-medium text-slate-700">Patient ID:</span>
-                      <Input
-                        value={editedData?.patient_id || prescriptionData.patient_id || ''}
-                        onChange={(e) => handleFieldChange('patient_id', e.target.value)}
-                        placeholder="Patient ID"
-                        className="ml-2 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
-                      />
+                      <span className="ml-2 text-slate-800">{staticData.patient_id}</span>
                     </div>
                     <div>
                       <span className="font-medium text-slate-700">Name:</span>
-                      <Input
-                        value={editedData?.patient_name || prescriptionData.patient_name || ''}
-                        onChange={(e) => handleFieldChange('patient_name', e.target.value)}
-                        placeholder="Patient Name"
-                        className="ml-2 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
-                      />
+                      <span className="ml-2 text-slate-800">{staticData.patient_name}</span>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
                         <span className="font-medium text-slate-700">Age:</span>
-                        <Input
-                          value={editedData?.patient_age || prescriptionData.patient_age || ''}
-                          onChange={(e) => handleFieldChange('patient_age', e.target.value)}
-                          placeholder="Age"
-                          className="ml-1 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
-                        />
+                        <span className="ml-1 text-slate-800">{staticData.patient_age}</span>
                       </div>
                       <div>
                         <span className="font-medium text-slate-700">Gender:</span>
-                        <Input
-                          value={editedData?.patient_gender || prescriptionData.patient_gender || ''}
-                          onChange={(e) => handleFieldChange('patient_gender', e.target.value)}
-                          placeholder="M/F"
-                          className="ml-1 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
-                        />
+                        <span className="ml-1 text-slate-800">{staticData.patient_gender}</span>
                       </div>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <div>
                       <span className="font-medium text-slate-700">Phone:</span>
-                      <Input
-                        value={editedData?.patient_phone || prescriptionData.patient_phone || ''}
-                        onChange={(e) => handleFieldChange('patient_phone', e.target.value)}
-                        placeholder="Patient Phone"
-                        className="ml-2 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
-                      />
+                      <span className="ml-2 text-slate-800">{staticData.patient_phone}</span>
                     </div>
                     <div>
                       <span className="font-medium text-slate-700">Date:</span>
-                      <Input
-                        value={editedData?.prescription_date || prescriptionData.prescription_date || ''}
-                        onChange={(e) => handleFieldChange('prescription_date', e.target.value)}
-                        placeholder="Date of Prescription"
-                        className="ml-2 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
-                      />
+                      <span className="ml-2 text-slate-800">{staticData.prescription_date}</span>
                     </div>
                   </div>
                 </div>
@@ -393,39 +355,19 @@ Follow-up: ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   <div>
                     <span className="font-medium text-slate-700">Temperature:</span>
-                    <Input
-                      value={editedData?.vitals_temp || prescriptionData.vitals_temp || ''}
-                      onChange={(e) => handleFieldChange('vitals_temp', e.target.value)}
-                      placeholder="98.6°F"
-                      className="w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
-                    />
+                    <span className="ml-2 text-slate-800">{staticData.vitals_temp}</span>
                   </div>
                   <div>
                     <span className="font-medium text-slate-700">Blood Pressure:</span>
-                    <Input
-                      value={editedData?.vitals_bp || prescriptionData.vitals_bp || ''}
-                      onChange={(e) => handleFieldChange('vitals_bp', e.target.value)}
-                      placeholder="120/80"
-                      className="w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
-                    />
+                    <span className="ml-2 text-slate-800">{staticData.vitals_bp}</span>
                   </div>
                   <div>
                     <span className="font-medium text-slate-700">Height:</span>
-                    <Input
-                      value={editedData?.vitals_height || prescriptionData.vitals_height || ''}
-                      onChange={(e) => handleFieldChange('vitals_height', e.target.value)}
-                      placeholder="5'8&quot;"
-                      className="w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
-                    />
+                    <span className="ml-2 text-slate-800">{staticData.vitals_height}</span>
                   </div>
                   <div>
                     <span className="font-medium text-slate-700">Weight:</span>
-                    <Input
-                      value={editedData?.vitals_weight || prescriptionData.vitals_weight || ''}
-                      onChange={(e) => handleFieldChange('vitals_weight', e.target.value)}
-                      placeholder="70kg"
-                      className="w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
-                    />
+                    <span className="ml-2 text-slate-800">{staticData.vitals_weight}</span>
                   </div>
                 </div>
               </div>
@@ -485,6 +427,19 @@ Follow-up: ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('
                   </div>
                 </div>
               )}
+
+              {/* Prescribed Investigations - Static from other departments */}
+              <div className="border-t pt-4">
+                <h3 className="text-lg font-semibold text-slate-700 mb-3">Prescribed Investigations</h3>
+                <div className="bg-slate-50 rounded-lg p-3">
+                  <p className="text-sm text-slate-600 mb-2">Pre-ordered by other departments:</p>
+                  <div className="space-y-1">
+                    {staticData.prescribed_investigations.map((test: string, index: number) => (
+                      <div key={index} className="text-slate-800">• {test}</div>
+                    ))}
+                  </div>
+                </div>
+              </div>
 
               {/* Rx Medicines - Tabular Format */}
               {prescriptionData.medicines && prescriptionData.medicines.length > 0 && (
