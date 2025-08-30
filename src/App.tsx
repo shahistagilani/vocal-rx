@@ -2,7 +2,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
-import { Mic, Square, FileText, X, UserCheck } from 'lucide-react'
+import { Mic, Square, FileText, X, UserCheck, Plus, Minus } from 'lucide-react'
 import { useState, useRef } from 'react'
 
 function App() {
@@ -168,6 +168,58 @@ Follow-up: ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('
       advice: {
         ...prev.advice,
         [field]: value
+      }
+    }))
+  }
+
+  const addMedicine = () => {
+    setEditedData((prev: any) => ({
+      ...prev,
+      medicines: [...(prev.medicines || []), {
+        brand_name: '',
+        generic_name: '',
+        dosage: '',
+        frequency: '',
+        duration: ''
+      }]
+    }))
+  }
+
+  const removeMedicine = (index: number) => {
+    setEditedData((prev: any) => ({
+      ...prev,
+      medicines: prev.medicines.filter((_: any, i: number) => i !== index)
+    }))
+  }
+
+  const addAdviceItem = (category: string) => {
+    setEditedData((prev: any) => ({
+      ...prev,
+      advice: {
+        ...prev.advice,
+        [category]: [...(prev.advice?.[category] || ['']), '']
+      }
+    }))
+  }
+
+  const removeAdviceItem = (category: string, index: number) => {
+    setEditedData((prev: any) => ({
+      ...prev,
+      advice: {
+        ...prev.advice,
+        [category]: prev.advice?.[category]?.filter((_: string, i: number) => i !== index) || []
+      }
+    }))
+  }
+
+  const handleAdviceItemChange = (category: string, index: number, value: string) => {
+    setEditedData((prev: any) => ({
+      ...prev,
+      advice: {
+        ...prev.advice,
+        [category]: prev.advice?.[category]?.map((item: string, i: number) => 
+          i === index ? value : item
+        ) || [value]
       }
     }))
   }
@@ -442,9 +494,20 @@ Follow-up: ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('
               </div>
 
               {/* Rx Medicines - Tabular Format */}
-              {prescriptionData.medicines && prescriptionData.medicines.length > 0 && (
+              {(prescriptionData.medicines && prescriptionData.medicines.length > 0) || (editedData?.medicines && editedData.medicines.length > 0) ? (
                 <div className="border-t pt-4">
-                  <h3 className="text-lg font-semibold text-slate-700 mb-3">Rx Medicine</h3>
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-lg font-semibold text-slate-700">Rx Medicine</h3>
+                    <Button
+                      onClick={addMedicine}
+                      size="sm"
+                      variant="outline"
+                      className="text-green-600 hover:text-green-700 border-green-200 hover:border-green-300"
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      Add Medicine
+                    </Button>
+                  </div>
                   <div className="overflow-x-auto">
                     <table className="w-full border-collapse border border-slate-300">
                       <thead>
@@ -452,10 +515,11 @@ Follow-up: ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('
                           <th className="border border-slate-300 px-3 py-2 text-left font-medium text-slate-700">Medicine Name (Generic Name)</th>
                           <th className="border border-slate-300 px-3 py-2 text-left font-medium text-slate-700">Dosage</th>
                           <th className="border border-slate-300 px-3 py-2 text-left font-medium text-slate-700">Duration</th>
+                          <th className="border border-slate-300 px-3 py-2 text-center font-medium text-slate-700 w-16">Action</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {(editedData?.medicines || prescriptionData.medicines).map((medicine: any, index: number) => (
+                        {(editedData?.medicines || prescriptionData.medicines || []).map((medicine: any, index: number) => (
                           <tr key={index}>
                             <td className="border border-slate-300 px-3 py-2">
                               <Input
@@ -499,44 +563,174 @@ Follow-up: ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('
                                 className="w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
                               />
                             </td>
+                            <td className="border border-slate-300 px-3 py-2 text-center">
+                              <Button
+                                onClick={() => removeMedicine(index)}
+                                size="sm"
+                                variant="ghost"
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50 p-1 h-8 w-8"
+                              >
+                                <Minus className="h-4 w-4" />
+                              </Button>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
                 </div>
+              ) : (
+                <div className="border-t pt-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-lg font-semibold text-slate-700">Rx Medicine</h3>
+                    <Button
+                      onClick={addMedicine}
+                      size="sm"
+                      variant="outline"
+                      className="text-green-600 hover:text-green-700 border-green-200 hover:border-green-300"
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      Add Medicine
+                    </Button>
+                  </div>
+                  <p className="text-slate-500 text-sm">No medicines prescribed yet. Click "Add Medicine" to start.</p>
+                </div>
               )}
 
               {/* Advice */}
               <div className="border-t pt-4">
                 <h3 className="text-lg font-semibold text-slate-700 mb-3">Advice</h3>
-                <div className="space-y-3">
+                <div className="space-y-4">
+                  {/* Diet Advice */}
                   <div>
-                    <span className="font-medium text-slate-700">Diet:</span>
-                    <Input
-                      value={editedData?.advice?.diet ?? prescriptionData.advice?.diet ?? ''}
-                      onChange={(e) => handleAdviceChange('diet', e.target.value)}
-                      placeholder="Low salt, low fat diet recommendations"
-                      className="ml-2 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
-                    />
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-medium text-slate-700">Diet:</span>
+                      <Button
+                        onClick={() => addAdviceItem('diet')}
+                        size="sm"
+                        variant="ghost"
+                        className="text-green-600 hover:text-green-700 hover:bg-green-50 p-1 h-6 w-6"
+                      >
+                        <Plus className="h-3 w-3" />
+                      </Button>
+                    </div>
+                    <div className="space-y-2">
+                      {Array.isArray(editedData?.advice?.diet) ? 
+                        editedData.advice.diet.map((item: string, index: number) => (
+                          <div key={index} className="flex items-center gap-2">
+                            <Input
+                              value={item}
+                              onChange={(e) => handleAdviceItemChange('diet', index, e.target.value)}
+                              placeholder="Diet recommendation"
+                              className="flex-1 border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
+                            />
+                            <Button
+                              onClick={() => removeAdviceItem('diet', index)}
+                              size="sm"
+                              variant="ghost"
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50 p-1 h-6 w-6"
+                            >
+                              <Minus className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        )) : (
+                          <Input
+                            value={editedData?.advice?.diet ?? prescriptionData?.advice?.diet ?? ''}
+                            onChange={(e) => handleAdviceChange('diet', e.target.value)}
+                            placeholder="Low salt, low fat diet recommendations"
+                            className="w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
+                          />
+                        )
+                      }
+                    </div>
                   </div>
+
+                  {/* Exercise Advice */}
                   <div>
-                    <span className="font-medium text-slate-700">Exercise:</span>
-                    <Input
-                      value={editedData?.advice?.exercise ?? prescriptionData.advice?.exercise ?? ''}
-                      onChange={(e) => handleAdviceChange('exercise', e.target.value)}
-                      placeholder="Exercise recommendations"
-                      className="ml-2 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
-                    />
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-medium text-slate-700">Exercise:</span>
+                      <Button
+                        onClick={() => addAdviceItem('exercise')}
+                        size="sm"
+                        variant="ghost"
+                        className="text-green-600 hover:text-green-700 hover:bg-green-50 p-1 h-6 w-6"
+                      >
+                        <Plus className="h-3 w-3" />
+                      </Button>
+                    </div>
+                    <div className="space-y-2">
+                      {Array.isArray(editedData?.advice?.exercise) ? 
+                        editedData.advice.exercise.map((item: string, index: number) => (
+                          <div key={index} className="flex items-center gap-2">
+                            <Input
+                              value={item}
+                              onChange={(e) => handleAdviceItemChange('exercise', index, e.target.value)}
+                              placeholder="Exercise recommendation"
+                              className="flex-1 border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
+                            />
+                            <Button
+                              onClick={() => removeAdviceItem('exercise', index)}
+                              size="sm"
+                              variant="ghost"
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50 p-1 h-6 w-6"
+                            >
+                              <Minus className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        )) : (
+                          <Input
+                            value={editedData?.advice?.exercise ?? prescriptionData?.advice?.exercise ?? ''}
+                            onChange={(e) => handleAdviceChange('exercise', e.target.value)}
+                            placeholder="Exercise recommendations"
+                            className="w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
+                          />
+                        )
+                      }
+                    </div>
                   </div>
+
+                  {/* Sleep Advice */}
                   <div>
-                    <span className="font-medium text-slate-700">Sleep:</span>
-                    <Input
-                      value={editedData?.advice?.sleep ?? prescriptionData.advice?.sleep ?? ''}
-                      onChange={(e) => handleAdviceChange('sleep', e.target.value)}
-                      placeholder="Sleep recommendations"
-                      className="ml-2 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
-                    />
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-medium text-slate-700">Sleep:</span>
+                      <Button
+                        onClick={() => addAdviceItem('sleep')}
+                        size="sm"
+                        variant="ghost"
+                        className="text-green-600 hover:text-green-700 hover:bg-green-50 p-1 h-6 w-6"
+                      >
+                        <Plus className="h-3 w-3" />
+                      </Button>
+                    </div>
+                    <div className="space-y-2">
+                      {Array.isArray(editedData?.advice?.sleep) ? 
+                        editedData.advice.sleep.map((item: string, index: number) => (
+                          <div key={index} className="flex items-center gap-2">
+                            <Input
+                              value={item}
+                              onChange={(e) => handleAdviceItemChange('sleep', index, e.target.value)}
+                              placeholder="Sleep recommendation"
+                              className="flex-1 border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
+                            />
+                            <Button
+                              onClick={() => removeAdviceItem('sleep', index)}
+                              size="sm"
+                              variant="ghost"
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50 p-1 h-6 w-6"
+                            >
+                              <Minus className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        )) : (
+                          <Input
+                            value={editedData?.advice?.sleep ?? prescriptionData?.advice?.sleep ?? ''}
+                            onChange={(e) => handleAdviceChange('sleep', e.target.value)}
+                            placeholder="Sleep recommendations"
+                            className="w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
+                          />
+                        )
+                      }
+                    </div>
                   </div>
                 </div>
               </div>
