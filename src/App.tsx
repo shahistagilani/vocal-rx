@@ -136,15 +136,6 @@ Plan:
     }))
   }
 
-  const handleAdviceChange = (field: string, value: string) => {
-    setEditedData((prev: any) => ({
-      ...prev,
-      advice: {
-        ...prev.advice,
-        [field]: value
-      }
-    }))
-  }
 
   const handleApprovePrescription = () => {
     // TODO: Implement doctor approval and e-signature
