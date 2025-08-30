@@ -2,7 +2,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
-import { Mic, Square, FileText, Edit3, Check, X, UserCheck } from 'lucide-react'
+import { Mic, Square, FileText, X, UserCheck } from 'lucide-react'
 import { useState, useRef } from 'react'
 
 function App() {
@@ -11,7 +11,6 @@ function App() {
   const [isProcessing, setIsProcessing] = useState(false)
   const [prescriptionData, setPrescriptionData] = useState<any>(null)
   const [isExtracting, setIsExtracting] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
   const [editedData, setEditedData] = useState<any>(null)
   const [hasExtracted, setHasExtracted] = useState(false)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
@@ -109,22 +108,6 @@ Plan:
     setPrescriptionData(null)
     setEditedData(null)
     setHasExtracted(false)
-    setIsEditing(false)
-  }
-
-  const handleEdit = () => {
-    setIsEditing(true)
-    setEditedData({ ...prescriptionData })
-  }
-
-  const handleSave = () => {
-    setPrescriptionData(editedData)
-    setIsEditing(false)
-  }
-
-  const handleCancel = () => {
-    setEditedData(prescriptionData)
-    setIsEditing(false)
   }
 
   const handleFieldChange = (field: string, value: any) => {
@@ -188,23 +171,12 @@ Plan:
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-semibold text-slate-800">Transcript</h2>
-              <div className="flex items-center gap-3">
-                {isExtracting && (
-                  <div className="flex items-center gap-2 text-sm text-slate-600">
-                    <div className="h-4 w-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
-                    Extracting prescription data...
-                  </div>
-                )}
-                <Button
-                  onClick={clearTranscript}
-                  variant="outline"
-                  size="sm"
-                  className="text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
-                >
-                  <X className="h-4 w-4 mr-1" />
-                  Clear
-                </Button>
-              </div>
+              {isExtracting && (
+                <div className="flex items-center gap-2 text-sm text-slate-600">
+                  <div className="h-4 w-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+                  Extracting prescription data...
+                </div>
+              )}
             </div>
             <Textarea
               value={transcript}
@@ -213,15 +185,24 @@ Plan:
               className="min-h-[300px] text-base leading-relaxed resize-none mb-6"
             />
             
-            {/* Extract Button */}
-            <Button
-              onClick={() => extractPrescriptionData(transcript)}
-              disabled={isExtracting}
-              className="mb-6"
-            >
-              <FileText className="h-4 w-4 mr-2" />
-              {isExtracting ? 'Extracting...' : 'Extract Prescription'}
-            </Button>
+            {/* Action Buttons */}
+            <div className="flex items-center gap-3 mb-6">
+              <Button
+                onClick={() => extractPrescriptionData(transcript)}
+                disabled={isExtracting}
+              >
+                <FileText className="h-4 w-4 mr-2" />
+                {isExtracting ? 'Extracting...' : 'Extract Prescription'}
+              </Button>
+              <Button
+                onClick={clearTranscript}
+                variant="outline"
+                className="text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
+              >
+                <X className="h-4 w-4 mr-1" />
+                Clear
+              </Button>
+            </div>
           </div>
         </section>
       )}
@@ -232,218 +213,137 @@ Plan:
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-semibold text-slate-800">Structured Prescription</h2>
-              <div className="flex items-center gap-2">
-                {!isEditing ? (
-                  <Button
-                    onClick={handleEdit}
-                    variant="outline"
-                    size="sm"
-                    className="flex items-center gap-2"
-                  >
-                    <Edit3 className="h-4 w-4" />
-                    Edit
-                  </Button>
-                ) : (
-                  <>
-                    <Button
-                      onClick={handleSave}
-                      variant="outline"
-                      size="sm"
-                      className="flex items-center gap-2 text-green-600 hover:text-green-700"
-                    >
-                      <Check className="h-4 w-4" />
-                      Save
-                    </Button>
-                    <Button
-                      onClick={handleCancel}
-                      variant="outline"
-                      size="sm"
-                      className="flex items-center gap-2 text-red-600 hover:text-red-700"
-                    >
-                      <X className="h-4 w-4" />
-                      Cancel
-                    </Button>
-                  </>
-                )}
-              </div>
+              <p className="text-sm text-slate-500">Click any field to edit</p>
             </div>
             <div className="bg-white rounded-lg shadow-lg p-6 space-y-6">
               {/* Chief Complaints */}
-              {(prescriptionData.chief_complaints || isEditing) && (
+              {prescriptionData.chief_complaints && (
                 <div>
                   <h3 className="text-lg font-semibold text-slate-700 mb-2">Chief Complaints</h3>
-                  {isEditing ? (
-                    <Input
-                      value={editedData?.chief_complaints || ''}
-                      onChange={(e) => handleFieldChange('chief_complaints', e.target.value)}
-                      placeholder="Enter chief complaints..."
-                      className="w-full"
-                    />
-                  ) : (
-                    <p className="text-slate-600">{prescriptionData.chief_complaints}</p>
-                  )}
+                  <Input
+                    value={editedData?.chief_complaints || prescriptionData.chief_complaints}
+                    onChange={(e) => handleFieldChange('chief_complaints', e.target.value)}
+                    placeholder="Enter chief complaints..."
+                    className="w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
+                  />
                 </div>
               )}
 
               {/* Clinical Findings */}
-              {(prescriptionData.clinical_findings || isEditing) && (
+              {prescriptionData.clinical_findings && (
                 <div>
                   <h3 className="text-lg font-semibold text-slate-700 mb-2">Clinical Findings</h3>
-                  {isEditing ? (
-                    <Input
-                      value={editedData?.clinical_findings || ''}
-                      onChange={(e) => handleFieldChange('clinical_findings', e.target.value)}
-                      placeholder="Enter clinical findings..."
-                      className="w-full"
-                    />
-                  ) : (
-                    <p className="text-slate-600">{prescriptionData.clinical_findings}</p>
-                  )}
+                  <Input
+                    value={editedData?.clinical_findings || prescriptionData.clinical_findings}
+                    onChange={(e) => handleFieldChange('clinical_findings', e.target.value)}
+                    placeholder="Enter clinical findings..."
+                    className="w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
+                  />
                 </div>
               )}
 
               {/* Diagnosis */}
-              {(prescriptionData.diagnosis || isEditing) && (
+              {prescriptionData.diagnosis && (
                 <div>
                   <h3 className="text-lg font-semibold text-slate-700 mb-2">Diagnosis</h3>
-                  {isEditing ? (
-                    <Input
-                      value={editedData?.diagnosis || ''}
-                      onChange={(e) => handleFieldChange('diagnosis', e.target.value)}
-                      placeholder="Enter diagnosis..."
-                      className="w-full"
-                    />
-                  ) : (
-                    <p className="text-slate-600">{prescriptionData.diagnosis}</p>
-                  )}
+                  <Input
+                    value={editedData?.diagnosis || prescriptionData.diagnosis}
+                    onChange={(e) => handleFieldChange('diagnosis', e.target.value)}
+                    placeholder="Enter diagnosis..."
+                    className="w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
+                  />
                 </div>
               )}
 
               {/* Investigations */}
-              {(prescriptionData.prescribed_investigations.length > 0 || isEditing) && (
+              {prescriptionData.prescribed_investigations.length > 0 && (
                 <div>
                   <h3 className="text-lg font-semibold text-slate-700 mb-2">Prescribed Investigations</h3>
-                  {isEditing ? (
-                    <div className="space-y-2">
-                      {(editedData?.prescribed_investigations || []).map((test: string, index: number) => (
-                        <Input
-                          key={index}
-                          value={test}
-                          onChange={(e) => handleInvestigationChange(index, e.target.value)}
-                          placeholder={`Investigation ${index + 1}`}
-                          className="w-full"
-                        />
-                      ))}
-                    </div>
-                  ) : (
-                    <ul className="list-disc list-inside text-slate-600 space-y-1">
-                      {prescriptionData.prescribed_investigations.map((test: string, index: number) => (
-                        <li key={index}>{test}</li>
-                      ))}
-                    </ul>
-                  )}
+                  <div className="space-y-2">
+                    {(editedData?.prescribed_investigations || prescriptionData.prescribed_investigations).map((test: string, index: number) => (
+                      <Input
+                        key={index}
+                        value={test}
+                        onChange={(e) => handleInvestigationChange(index, e.target.value)}
+                        placeholder={`Investigation ${index + 1}`}
+                        className="w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
+                      />
+                    ))}
+                  </div>
                 </div>
               )}
 
               {/* Medicines */}
-              {(prescriptionData.medicines.length > 0 || isEditing) && (
+              {prescriptionData.medicines.length > 0 && (
                 <div>
                   <h3 className="text-lg font-semibold text-slate-700 mb-2">Medicines</h3>
                   <div className="space-y-3">
-                    {(isEditing ? editedData?.medicines : prescriptionData.medicines).map((medicine: any, index: number) => (
+                    {(editedData?.medicines || prescriptionData.medicines).map((medicine: any, index: number) => (
                       <div key={index} className="bg-slate-50 rounded-lg p-4">
                         <div className="grid grid-cols-2 gap-4 text-sm">
                           <div>
                             <span className="font-medium text-slate-700">Generic Name:</span>
-                            {isEditing ? (
-                              <Input
-                                value={medicine.generic_name || ''}
-                                onChange={(e) => handleMedicineChange(index, 'generic_name', e.target.value)}
-                                placeholder="Generic name"
-                                className="ml-2 w-full"
-                              />
-                            ) : (
-                              <span className="ml-2 text-slate-600">{medicine.generic_name || 'N/A'}</span>
-                            )}
+                            <Input
+                              value={medicine.generic_name || ''}
+                              onChange={(e) => handleMedicineChange(index, 'generic_name', e.target.value)}
+                              placeholder="Generic name"
+                              className="ml-2 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
+                            />
                           </div>
                           <div>
                             <span className="font-medium text-slate-700">Brand Name:</span>
-                            {isEditing ? (
-                              <Input
-                                value={medicine.brand_name || ''}
-                                onChange={(e) => handleMedicineChange(index, 'brand_name', e.target.value)}
-                                placeholder="Brand name"
-                                className="ml-2 w-full"
-                              />
-                            ) : (
-                              <span className="ml-2 text-slate-600">{medicine.brand_name || 'N/A'}</span>
-                            )}
+                            <Input
+                              value={medicine.brand_name || ''}
+                              onChange={(e) => handleMedicineChange(index, 'brand_name', e.target.value)}
+                              placeholder="Brand name"
+                              className="ml-2 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
+                            />
                           </div>
                           <div>
                             <span className="font-medium text-slate-700">Dosage:</span>
-                            {isEditing ? (
-                              <Input
-                                value={medicine.dosage || ''}
-                                onChange={(e) => handleMedicineChange(index, 'dosage', e.target.value)}
-                                placeholder="Dosage"
-                                className="ml-2 w-full"
-                              />
-                            ) : (
-                              <span className="ml-2 text-slate-600">{medicine.dosage || 'N/A'}</span>
-                            )}
+                            <Input
+                              value={medicine.dosage || ''}
+                              onChange={(e) => handleMedicineChange(index, 'dosage', e.target.value)}
+                              placeholder="Dosage"
+                              className="ml-2 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
+                            />
                           </div>
                           <div>
                             <span className="font-medium text-slate-700">Frequency:</span>
-                            {isEditing ? (
-                              <Input
-                                value={medicine.frequency || ''}
-                                onChange={(e) => handleMedicineChange(index, 'frequency', e.target.value)}
-                                placeholder="Frequency"
-                                className="ml-2 w-full"
-                              />
-                            ) : (
-                              <span className="ml-2 text-slate-600">{medicine.frequency || 'N/A'}</span>
-                            )}
+                            <Input
+                              value={medicine.frequency || ''}
+                              onChange={(e) => handleMedicineChange(index, 'frequency', e.target.value)}
+                              placeholder="Frequency"
+                              className="ml-2 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
+                            />
                           </div>
                           <div>
                             <span className="font-medium text-slate-700">Route:</span>
-                            {isEditing ? (
-                              <Input
-                                value={medicine.route || ''}
-                                onChange={(e) => handleMedicineChange(index, 'route', e.target.value)}
-                                placeholder="Route"
-                                className="ml-2 w-full"
-                              />
-                            ) : (
-                              <span className="ml-2 text-slate-600">{medicine.route || 'N/A'}</span>
-                            )}
+                            <Input
+                              value={medicine.route || ''}
+                              onChange={(e) => handleMedicineChange(index, 'route', e.target.value)}
+                              placeholder="Route"
+                              className="ml-2 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
+                            />
                           </div>
                           <div>
                             <span className="font-medium text-slate-700">Duration:</span>
-                            {isEditing ? (
-                              <Input
-                                value={medicine.duration || ''}
-                                onChange={(e) => handleMedicineChange(index, 'duration', e.target.value)}
-                                placeholder="Duration"
-                                className="ml-2 w-full"
-                              />
-                            ) : (
-                              <span className="ml-2 text-slate-600">{medicine.duration || 'N/A'}</span>
-                            )}
+                            <Input
+                              value={medicine.duration || ''}
+                              onChange={(e) => handleMedicineChange(index, 'duration', e.target.value)}
+                              placeholder="Duration"
+                              className="ml-2 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
+                            />
                           </div>
                         </div>
                         <div className="mt-2">
                           <span className="font-medium text-slate-700">Remarks:</span>
-                          {isEditing ? (
-                            <Input
-                              value={medicine.remarks || ''}
-                              onChange={(e) => handleMedicineChange(index, 'remarks', e.target.value)}
-                              placeholder="Remarks"
-                              className="ml-2 w-full"
-                            />
-                          ) : (
-                            medicine.remarks && <span className="ml-2 text-slate-600">{medicine.remarks}</span>
-                          )}
+                          <Input
+                            value={medicine.remarks || ''}
+                            onChange={(e) => handleMedicineChange(index, 'remarks', e.target.value)}
+                            placeholder="Remarks"
+                            className="ml-2 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
+                          />
                         </div>
                       </div>
                     ))}
@@ -452,101 +352,87 @@ Plan:
               )}
 
               {/* Advice */}
-              {(prescriptionData.advice?.diet || prescriptionData.advice?.exercise || prescriptionData.advice?.sleep || prescriptionData.advice?.other || isEditing) && (
+              {(prescriptionData.advice?.diet || prescriptionData.advice?.exercise || prescriptionData.advice?.sleep || prescriptionData.advice?.other) && (
                 <div>
                   <h3 className="text-lg font-semibold text-slate-700 mb-2">Advice</h3>
                   <div className="space-y-3">
-                    <div>
-                      <span className="font-medium text-slate-700">Diet:</span>
-                      {isEditing ? (
+                    {(prescriptionData.advice?.diet || editedData?.advice?.diet !== undefined) && (
+                      <div>
+                        <span className="font-medium text-slate-700">Diet:</span>
                         <Input
-                          value={editedData?.advice?.diet || ''}
+                          value={editedData?.advice?.diet ?? prescriptionData.advice?.diet ?? ''}
                           onChange={(e) => handleAdviceChange('diet', e.target.value)}
                           placeholder="Diet advice"
-                          className="ml-2 w-full"
+                          className="ml-2 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
                         />
-                      ) : (
-                        prescriptionData.advice?.diet && <span className="ml-2 text-slate-600">{prescriptionData.advice.diet}</span>
-                      )}
-                    </div>
-                    <div>
-                      <span className="font-medium text-slate-700">Exercise:</span>
-                      {isEditing ? (
+                      </div>
+                    )}
+                    {(prescriptionData.advice?.exercise || editedData?.advice?.exercise !== undefined) && (
+                      <div>
+                        <span className="font-medium text-slate-700">Exercise:</span>
                         <Input
-                          value={editedData?.advice?.exercise || ''}
+                          value={editedData?.advice?.exercise ?? prescriptionData.advice?.exercise ?? ''}
                           onChange={(e) => handleAdviceChange('exercise', e.target.value)}
                           placeholder="Exercise advice"
-                          className="ml-2 w-full"
+                          className="ml-2 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
                         />
-                      ) : (
-                        prescriptionData.advice?.exercise && <span className="ml-2 text-slate-600">{prescriptionData.advice.exercise}</span>
-                      )}
-                    </div>
-                    <div>
-                      <span className="font-medium text-slate-700">Sleep:</span>
-                      {isEditing ? (
+                      </div>
+                    )}
+                    {(prescriptionData.advice?.sleep || editedData?.advice?.sleep !== undefined) && (
+                      <div>
+                        <span className="font-medium text-slate-700">Sleep:</span>
                         <Input
-                          value={editedData?.advice?.sleep || ''}
+                          value={editedData?.advice?.sleep ?? prescriptionData.advice?.sleep ?? ''}
                           onChange={(e) => handleAdviceChange('sleep', e.target.value)}
                           placeholder="Sleep advice"
-                          className="ml-2 w-full"
+                          className="ml-2 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
                         />
-                      ) : (
-                        prescriptionData.advice?.sleep && <span className="ml-2 text-slate-600">{prescriptionData.advice.sleep}</span>
-                      )}
-                    </div>
-                    <div>
-                      <span className="font-medium text-slate-700">Other:</span>
-                      {isEditing ? (
+                      </div>
+                    )}
+                    {(prescriptionData.advice?.other || editedData?.advice?.other !== undefined) && (
+                      <div>
+                        <span className="font-medium text-slate-700">Other:</span>
                         <Input
-                          value={editedData?.advice?.other || ''}
+                          value={editedData?.advice?.other ?? prescriptionData.advice?.other ?? ''}
                           onChange={(e) => handleAdviceChange('other', e.target.value)}
                           placeholder="Other advice"
-                          className="ml-2 w-full"
+                          className="ml-2 w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
                         />
-                      ) : (
-                        prescriptionData.advice?.other && <span className="ml-2 text-slate-600">{prescriptionData.advice.other}</span>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
 
               {/* Follow-up Date */}
-              {(prescriptionData.followup_date || isEditing) && (
+              {prescriptionData.followup_date && (
                 <div>
                   <h3 className="text-lg font-semibold text-slate-700 mb-2">Follow-up Date</h3>
-                  {isEditing ? (
-                    <Input
-                      value={editedData?.followup_date || ''}
-                      onChange={(e) => handleFieldChange('followup_date', e.target.value)}
-                      placeholder="YYYY-MM-DD"
-                      className="w-full"
-                    />
-                  ) : (
-                    <p className="text-slate-600">{prescriptionData.followup_date}</p>
-                  )}
+                  <Input
+                    value={editedData?.followup_date || prescriptionData.followup_date}
+                    onChange={(e) => handleFieldChange('followup_date', e.target.value)}
+                    placeholder="YYYY-MM-DD"
+                    className="w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
+                  />
                 </div>
               )}
 
               {/* Doctor Approval Section */}
-              {!isEditing && (
-                <div className="border-t pt-6 mt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-lg font-semibold text-slate-700 mb-2">Doctor Approval</h3>
-                      <p className="text-sm text-slate-500">Review and approve the prescription</p>
-                    </div>
-                    <Button
-                      onClick={handleApprovePrescription}
-                      className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 flex items-center gap-2"
-                    >
-                      <UserCheck className="h-5 w-5" />
-                      Approve & Sign
-                    </Button>
+              <div className="border-t pt-6 mt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-slate-700 mb-2">Doctor Approval</h3>
+                    <p className="text-sm text-slate-500">Review and approve the prescription</p>
                   </div>
+                  <Button
+                    onClick={handleApprovePrescription}
+                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 flex items-center gap-2"
+                  >
+                    <UserCheck className="h-5 w-5" />
+                    Approve & Sign
+                  </Button>
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </section>
