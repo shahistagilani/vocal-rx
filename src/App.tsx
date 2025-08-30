@@ -13,6 +13,7 @@ function App() {
   const [isExtracting, setIsExtracting] = useState(false)
   const [editedData, setEditedData] = useState<any>(null)
   const [hasExtracted, setHasExtracted] = useState(false)
+  const [showTranscript, setShowTranscript] = useState(false)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioChunksRef = useRef<Blob[]>([])
 
@@ -67,6 +68,7 @@ Plan:
 - Follow up in 1 week`
       
       setTranscript(prev => prev ? prev + '\n\n' + dummyTranscript : dummyTranscript)
+      setShowTranscript(true)
       setIsProcessing(false)
     } catch (error) {
       console.error('Error uploading audio:', error)
@@ -163,7 +165,7 @@ Plan:
       </section>
 
       {/* Transcript Display */}
-      {transcript && (
+      {showTranscript && (
         <section className="container mx-auto px-6 pb-32">
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center justify-between mb-4">
