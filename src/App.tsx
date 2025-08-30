@@ -5,12 +5,12 @@ function App() {
   return (
     <main className="min-h-dvh bg-gradient-to-b from-orange-50 via-rose-50 to-amber-50 text-slate-900 relative overflow-hidden">
       <section className="container mx-auto px-6 pt-20 pb-40 text-center">
-        <h1 className="mx-auto max-w-5xl font-bold text-6xl sm:text-7xl md:text-8xl lg:text-9xl tracking-tighter leading-none text-slate-900 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 bg-clip-text text-transparent">
+        <h1 className="mx-auto max-w-5xl font-light text-7xl sm:text-8xl md:text-9xl tracking-wide leading-none text-slate-800">
           Vocal RX
         </h1>
-        <p className="mx-auto mt-8 max-w-3xl text-xl sm:text-2xl md:text-3xl font-medium leading-relaxed text-slate-700">
-          Healing begins with a <span className="text-orange-600 font-semibold">conversation</span>, 
-          turning <span className="text-blue-600 font-semibold">voices</span> into <span className="text-emerald-600 font-semibold">care</span>.
+        <p className="mx-auto mt-10 max-w-4xl text-2xl sm:text-3xl md:text-4xl font-light leading-relaxed text-slate-600">
+          Healing begins with a conversation, 
+          turning <span className="text-indigo-500 font-normal">voices</span> into <span className="text-emerald-600 font-normal">care</span>.
         </p>
         <p className="mx-auto mt-6 max-w-2xl text-lg sm:text-xl text-slate-500 font-light">
           Dictate a prescription. We structure it instantly. Edit and export in seconds.
