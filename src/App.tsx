@@ -188,7 +188,7 @@ Plan:
             <div className="flex items-center gap-3 mb-6">
               <Button
                 onClick={() => extractPrescriptionData(transcript)}
-                disabled={isExtracting}
+                disabled={isExtracting || !transcript.trim()}
               >
                 <FileText className="h-4 w-4 mr-2" />
                 {isExtracting ? 'Extracting...' : 'Extract Prescription'}
