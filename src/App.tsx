@@ -136,6 +136,24 @@ Plan:
     }))
   }
 
+  const handleAdviceChange = (field: string, value: string) => {
+    setEditedData((prev: any) => ({
+      ...prev,
+      advice: {
+        ...prev.advice,
+        [field]: value
+      }
+    }))
+  }
+
+  const handleInvestigationChange = (index: number, value: string) => {
+    setEditedData((prev: any) => ({
+      ...prev,
+      prescribed_investigations: prev.prescribed_investigations.map((inv: string, i: number) => 
+        i === index ? value : inv
+      )
+    }))
+  }
 
   const handleApprovePrescription = () => {
     // TODO: Implement doctor approval and e-signature
@@ -284,14 +302,28 @@ Plan:
               )}
 
               {/* Investigations */}
-              {prescriptionData.prescribed_investigations.length > 0 && (
+              {(prescriptionData.prescribed_investigations.length > 0 || isEditing) && (
                 <div>
                   <h3 className="text-lg font-semibold text-slate-700 mb-2">Prescribed Investigations</h3>
-                  <ul className="list-disc list-inside text-slate-600 space-y-1">
-                    {prescriptionData.prescribed_investigations.map((test: string, index: number) => (
-                      <li key={index}>{test}</li>
-                    ))}
-                  </ul>
+                  {isEditing ? (
+                    <div className="space-y-2">
+                      {(editedData?.prescribed_investigations || []).map((test: string, index: number) => (
+                        <Input
+                          key={index}
+                          value={test}
+                          onChange={(e) => handleInvestigationChange(index, e.target.value)}
+                          placeholder={`Investigation ${index + 1}`}
+                          className="w-full"
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <ul className="list-disc list-inside text-slate-600 space-y-1">
+                      {prescriptionData.prescribed_investigations.map((test: string, index: number) => (
+                        <li key={index}>{test}</li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               )}
 
@@ -402,14 +434,62 @@ Plan:
               )}
 
               {/* Advice */}
-              {(prescriptionData.advice.diet || prescriptionData.advice.exercise || prescriptionData.advice.sleep || prescriptionData.advice.other) && (
+              {(prescriptionData.advice?.diet || prescriptionData.advice?.exercise || prescriptionData.advice?.sleep || prescriptionData.advice?.other || isEditing) && (
                 <div>
                   <h3 className="text-lg font-semibold text-slate-700 mb-2">Advice</h3>
-                  <div className="space-y-2 text-slate-600">
-                    {prescriptionData.advice.diet && <p><span className="font-medium">Diet:</span> {prescriptionData.advice.diet}</p>}
-                    {prescriptionData.advice.exercise && <p><span className="font-medium">Exercise:</span> {prescriptionData.advice.exercise}</p>}
-                    {prescriptionData.advice.sleep && <p><span className="font-medium">Sleep:</span> {prescriptionData.advice.sleep}</p>}
-                    {prescriptionData.advice.other && <p><span className="font-medium">Other:</span> {prescriptionData.advice.other}</p>}
+                  <div className="space-y-3">
+                    <div>
+                      <span className="font-medium text-slate-700">Diet:</span>
+                      {isEditing ? (
+                        <Input
+                          value={editedData?.advice?.diet || ''}
+                          onChange={(e) => handleAdviceChange('diet', e.target.value)}
+                          placeholder="Diet advice"
+                          className="ml-2 w-full"
+                        />
+                      ) : (
+                        prescriptionData.advice?.diet && <span className="ml-2 text-slate-600">{prescriptionData.advice.diet}</span>
+                      )}
+                    </div>
+                    <div>
+                      <span className="font-medium text-slate-700">Exercise:</span>
+                      {isEditing ? (
+                        <Input
+                          value={editedData?.advice?.exercise || ''}
+                          onChange={(e) => handleAdviceChange('exercise', e.target.value)}
+                          placeholder="Exercise advice"
+                          className="ml-2 w-full"
+                        />
+                      ) : (
+                        prescriptionData.advice?.exercise && <span className="ml-2 text-slate-600">{prescriptionData.advice.exercise}</span>
+                      )}
+                    </div>
+                    <div>
+                      <span className="font-medium text-slate-700">Sleep:</span>
+                      {isEditing ? (
+                        <Input
+                          value={editedData?.advice?.sleep || ''}
+                          onChange={(e) => handleAdviceChange('sleep', e.target.value)}
+                          placeholder="Sleep advice"
+                          className="ml-2 w-full"
+                        />
+                      ) : (
+                        prescriptionData.advice?.sleep && <span className="ml-2 text-slate-600">{prescriptionData.advice.sleep}</span>
+                      )}
+                    </div>
+                    <div>
+                      <span className="font-medium text-slate-700">Other:</span>
+                      {isEditing ? (
+                        <Input
+                          value={editedData?.advice?.other || ''}
+                          onChange={(e) => handleAdviceChange('other', e.target.value)}
+                          placeholder="Other advice"
+                          className="ml-2 w-full"
+                        />
+                      ) : (
+                        prescriptionData.advice?.other && <span className="ml-2 text-slate-600">{prescriptionData.advice.other}</span>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
