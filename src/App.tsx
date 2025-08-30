@@ -299,7 +299,6 @@ ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN')} or
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-semibold text-slate-800">Structured Prescription</h2>
-              <p className="text-sm text-slate-500">Click any field to edit</p>
             </div>
             <div className="bg-white rounded-lg shadow-lg p-6 space-y-6">
               {/* Clinic Header */}
@@ -418,11 +417,11 @@ ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN')} or
               {prescriptionData.chief_complaints && (
                 <div>
                   <h3 className="text-lg font-semibold text-slate-700 mb-2">Chief Complaints</h3>
-                  <Input
+                  <Textarea
                     value={editedData?.chief_complaints || prescriptionData.chief_complaints}
                     onChange={(e) => handleFieldChange('chief_complaints', e.target.value)}
                     placeholder="Enter chief complaints..."
-                    className="w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
+                    className="w-full min-h-[80px] border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors resize-none"
                   />
                 </div>
               )}
@@ -444,11 +443,11 @@ ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN')} or
               {prescriptionData.diagnosis && (
                 <div>
                   <h3 className="text-lg font-semibold text-slate-700 mb-2">Diagnosis</h3>
-                  <Input
+                  <Textarea
                     value={editedData?.diagnosis || prescriptionData.diagnosis}
                     onChange={(e) => handleFieldChange('diagnosis', e.target.value)}
                     placeholder="Enter diagnosis..."
-                    className="w-full border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors"
+                    className="w-full min-h-[80px] border-transparent hover:border-slate-300 focus:border-slate-400 bg-transparent hover:bg-slate-50 focus:bg-white transition-colors resize-none"
                   />
                 </div>
               )}
