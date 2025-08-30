@@ -84,25 +84,23 @@ function App() {
       await new Promise(resolve => setTimeout(resolve, 2000))
       
       // Part 4: Doctor's unique contribution per visit (voice captured)
-      const dummyTranscript = `Chief Complaint: Chest pain and shortness of breath for the past 2 days
+      const dummyTranscript = `Chest pain and shortness of breath for the past 2 days
 
-History of Present Illness: Patient reports substernal chest pain, worse with exertion, associated with mild shortness of breath. No radiation to arms or jaw. No nausea or diaphoresis.
+Patient reports substernal chest pain, worse with exertion, associated with mild shortness of breath. No radiation to arms or jaw. No nausea or diaphoresis.
 
-Clinical Findings: Mild chest discomfort on exertion, no resting pain. Heart sounds normal, no murmurs. Lungs clear bilaterally.
+Mild chest discomfort on exertion, no resting pain. Heart sounds normal, no murmurs. Lungs clear bilaterally.
 
-Diagnosis: Possible stable angina, rule out myocardial infarction
+Possible stable angina, rule out myocardial infarction
 
-Rx Medicines:
 1. Aspirin 75mg - Once daily - 30 days
 2. Atorvastatin 20mg - Once daily at bedtime - 30 days  
 3. Metoprolol 25mg - Twice daily - 30 days
 
-Advice:
-Diet: Low salt, low fat diet, avoid fried foods, increase omega-3 rich foods
-Exercise: Light walking 30 minutes daily, avoid strenuous activity until follow-up
-Sleep: 7-8 hours adequate sleep, elevate head if experiencing chest discomfort
+Low salt, low fat diet, avoid fried foods, increase omega-3 rich foods
+Light walking 30 minutes daily, avoid strenuous activity until follow-up
+7-8 hours adequate sleep, elevate head if experiencing chest discomfort
 
-Follow-up: ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN')} or sooner if symptoms worsen`
+${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN')} or sooner if symptoms worsen`
       
       setTranscript(prev => prev ? prev + '\n\n' + dummyTranscript : dummyTranscript)
       setShowTranscript(true)
@@ -304,13 +302,6 @@ Follow-up: ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('
               <p className="text-sm text-slate-500">Click any field to edit</p>
             </div>
             <div className="bg-white rounded-lg shadow-lg p-6 space-y-6">
-              {/* Header Note */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-                <p className="text-sm text-blue-800">
-                  <span className="font-medium">Parts 1-3 (Static):</span> Doctor, Clinic, Patient & Vitals info pre-filled from records.
-                  <span className="font-medium ml-2">Part 4 (Voice):</span> Doctor's clinical assessment captured via speech.
-                </p>
-              </div>
               {/* Clinic Header */}
               <div className="border-b pb-4 mb-6">
                 <div className="text-center">
@@ -380,11 +371,11 @@ Follow-up: ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('
                     <div className="grid grid-cols-2 gap-2">
                       <div>
                         <span className="font-medium text-slate-700">Age:</span>
-                        <span className="ml-1 text-slate-800">{staticData.patient_age}</span>
+                        <span className="ml-2 text-slate-800">{staticData.patient_age}</span>
                       </div>
                       <div>
                         <span className="font-medium text-slate-700">Gender:</span>
-                        <span className="ml-1 text-slate-800">{staticData.patient_gender}</span>
+                        <span className="ml-2 text-slate-800">{staticData.patient_gender}</span>
                       </div>
                     </div>
                   </div>
@@ -480,18 +471,6 @@ Follow-up: ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('
                 </div>
               )}
 
-              {/* Prescribed Investigations - Static from other departments */}
-              <div className="border-t pt-4">
-                <h3 className="text-lg font-semibold text-slate-700 mb-3">Prescribed Investigations</h3>
-                <div className="bg-slate-50 rounded-lg p-3">
-                  <p className="text-sm text-slate-600 mb-2">Pre-ordered by other departments:</p>
-                  <div className="space-y-1">
-                    {staticData.prescribed_investigations.map((test: string, index: number) => (
-                      <div key={index} className="text-slate-800">• {test}</div>
-                    ))}
-                  </div>
-                </div>
-              </div>
 
               {/* Rx Medicines - Tabular Format */}
               {(prescriptionData.medicines && prescriptionData.medicines.length > 0) || (editedData?.medicines && editedData.medicines.length > 0) ? (
