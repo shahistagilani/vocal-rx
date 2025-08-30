@@ -1,11 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-// Force ES module syntax
-export default async function handler(
-  req: VercelRequest,
-  res: VercelResponse
-) {
-
 interface Medicine {
   brand_name: string | null
   generic_name: string | null
@@ -74,28 +68,6 @@ Return JSON with this schema:
   },
   "followup_date": string (YYYY-MM-DD) or null
 }`
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' })
-  }
-
-  try {
-    const { transcript } = req.body
-
-    if (!transcript || typeof transcript !== 'string') {
-      return res.status(400).json({ error: 'Transcript is required' })
-    }
-
-    // For now, return mock data based on the transcript content
-    // In production, this would call an LLM API (OpenAI, Anthropic, etc.)
-    const extractedData: PrescriptionData = await extractPrescriptionData(transcript)
-
-    res.status(200).json(extractedData)
-  } catch (error) {
-    console.error('Error extracting prescription:', error)
-    res.status(500).json({ error: 'Failed to extract prescription data' })
-  }
-}
 
 async function extractPrescriptionData(transcript: string): Promise<PrescriptionData> {
   // Mock extraction logic - replace with actual LLM API call
@@ -185,5 +157,31 @@ async function extractPrescriptionData(transcript: string): Promise<Prescription
     medicines: medicines,
     advice: advice,
     followup_date: followupDate
+  }
+}
+
+export default async function handler(
+  req: VercelRequest,
+  res: VercelResponse
+) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' })
+  }
+
+  try {
+    const { transcript } = req.body
+
+    if (!transcript || typeof transcript !== 'string') {
+      return res.status(400).json({ error: 'Transcript is required' })
+    }
+
+    // For now, return mock data based on the transcript content
+    // In production, this would call an LLM API (OpenAI, Anthropic, etc.)
+    const extractedData: PrescriptionData = await extractPrescriptionData(transcript)
+
+    res.status(200).json(extractedData)
+  } catch (error) {
+    console.error('Error extracting prescription:', error)
+    res.status(500).json({ error: 'Failed to extract prescription data' })
   }
 }
