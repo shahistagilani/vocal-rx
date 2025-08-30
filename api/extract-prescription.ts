@@ -1,5 +1,11 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
+// Force ES module syntax
+export default async function handler(
+  req: VercelRequest,
+  res: VercelResponse
+) {
+
 interface Medicine {
   brand_name: string | null
   generic_name: string | null
@@ -69,10 +75,6 @@ Return JSON with this schema:
   "followup_date": string (YYYY-MM-DD) or null
 }`
 
-export default async function handler(
-  req: VercelRequest,
-  res: VercelResponse
-) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
