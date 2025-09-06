@@ -683,74 +683,40 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
                   
                   {editedData.medicines?.map((medicine: any, index: number) => (
                     <div key={index} className="border border-gray-200 rounded-lg p-4 mb-3">
-                      <div className="flex justify-between items-start mb-3">
-                        <h4 className="font-medium text-gray-900">Medicine {index + 1}</h4>
-                        <button
-                          onClick={() => removeMedicine(index)}
-                          className="text-red-500 hover:text-red-700 text-sm"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                      
-                      <div className="grid grid-cols-2 gap-3 mb-3">
+                      <div className="grid grid-cols-3 gap-3">
                         <input
                           type="text"
-                          placeholder="Brand name"
+                          placeholder="Medicine name"
                           value={medicine.brand_name || ''}
                           onChange={(e) => handleMedicineChange(index, 'brand_name', e.target.value)}
                           className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
                         />
                         <input
                           type="text"
-                          placeholder="Generic name"
-                          value={medicine.generic_name || ''}
-                          onChange={(e) => handleMedicineChange(index, 'generic_name', e.target.value)}
-                          className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
-                        />
-                      </div>
-                      
-                      <div className="grid grid-cols-2 gap-3 mb-3">
-                        <input
-                          type="text"
-                          placeholder="Dosage (e.g., 500mg, 10ml)"
+                          placeholder="Dosage"
                           value={medicine.dosage || ''}
                           onChange={(e) => handleMedicineChange(index, 'dosage', e.target.value)}
                           className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
                         />
-                        <input
-                          type="text"
-                          placeholder="Frequency (e.g., OD, BD, TDS)"
-                          value={medicine.frequency || ''}
-                          onChange={(e) => handleMedicineChange(index, 'frequency', e.target.value)}
-                          className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
-                        />
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="text"
+                            placeholder="Duration"
+                            value={medicine.duration || ''}
+                            onChange={(e) => handleMedicineChange(index, 'duration', e.target.value)}
+                            className="flex-1 p-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
+                          />
+                          <button
+                            onClick={() => removeMedicine(index)}
+                            className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
+                            title="Delete medicine"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        </div>
                       </div>
-                      
-                      <div className="grid grid-cols-2 gap-3 mb-3">
-                        <input
-                          type="text"
-                          placeholder="Route (e.g., Oral, IV, IM, Topical)"
-                          value={medicine.route || ''}
-                          onChange={(e) => handleMedicineChange(index, 'route', e.target.value)}
-                          className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
-                        />
-                        <input
-                          type="text"
-                          placeholder="Duration (e.g., 7 days, 2 weeks)"
-                          value={medicine.duration || ''}
-                          onChange={(e) => handleMedicineChange(index, 'duration', e.target.value)}
-                          className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
-                        />
-                      </div>
-                      
-                      <input
-                        type="text"
-                        placeholder="Remarks"
-                        value={medicine.remarks || ''}
-                        onChange={(e) => handleMedicineChange(index, 'remarks', e.target.value)}
-                        className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
-                      />
                     </div>
                   ))}
                 </div>
