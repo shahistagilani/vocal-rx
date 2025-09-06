@@ -4,7 +4,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import { Mic, Square, FileText, X, UserCheck, Plus, Minus } from 'lucide-react'
 import { useState, useRef } from 'react'
-import { WaveformVisualizer } from '@/components/WaveformVisualizer'
+import { RecordingInterface } from '@/components/RecordingInterface'
 
 function App() {
   const [isRecording, setIsRecording] = useState(false)
@@ -79,6 +79,18 @@ function App() {
       mediaRecorderRef.current.stop()
       setIsRecording(false)
       setIsProcessing(true)
+    }
+  }
+
+  const restartRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop()
+      // Clear previous recording data
+      audioChunksRef.current = []
+      // Start new recording after a brief delay
+      setTimeout(() => {
+        startRecording()
+      }, 100)
     }
   }
 
@@ -255,21 +267,24 @@ ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN')} or
         </p>
       </section>
 
-      {/* Waveform Visualizer */}
-      {(isRecording || isProcessing) && (
-        <section className="container mx-auto px-6 pb-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-slate-800 mb-4 text-center">
-                {isRecording ? 'Recording Audio' : 'Processing Audio'}
-              </h3>
-              <WaveformVisualizer 
-                isRecording={isRecording}
-                mediaStream={mediaStreamRef.current}
-              />
-            </div>
+      {/* Recording Interface */}
+      {isRecording && (
+        <RecordingInterface
+          isRecording={isRecording}
+          mediaStream={mediaStreamRef.current}
+          onRestart={restartRecording}
+          onStop={stopRecording}
+        />
+      )}
+
+      {/* Processing Indicator */}
+      {isProcessing && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl p-8 text-center">
+            <div className="h-8 w-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-slate-700 font-medium">Processing your recording...</p>
           </div>
-        </section>
+        </div>
       )}
 
       {/* Transcript Display */}

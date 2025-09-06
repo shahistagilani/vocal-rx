@@ -66,7 +66,7 @@ export const WaveformVisualizer = ({
         const bufferLength = analyser.frequencyBinCount
         const dataArray = new Uint8Array(bufferLength)
 
-        // Create a function to draw the waveform
+        // Create a function to draw the waveform bars
         const drawWaveform = () => {
           if (!analyserRef.current || !canvasRef.current) return
 
@@ -74,37 +74,39 @@ export const WaveformVisualizer = ({
           const ctx = canvas.getContext('2d')
           if (!ctx) return
 
-          analyser.getByteTimeDomainData(dataArray)
+          analyser.getByteFrequencyData(dataArray)
           
           const width = canvas.width / window.devicePixelRatio
           const height = canvas.height / window.devicePixelRatio
           
-          // Clear canvas
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.1)'
-          ctx.fillRect(0, 0, width, height)
+          // Clear canvas with transparent background
+          ctx.clearRect(0, 0, width, height)
           
-          // Draw waveform
-          ctx.lineWidth = 2
-          ctx.strokeStyle = '#f97316'
-          ctx.beginPath()
+          // Draw vertical bars
+          const barCount = 40 // Number of bars to display
+          const barWidth = 3
+          const barSpacing = (width - (barCount * barWidth)) / (barCount - 1)
           
-          const sliceWidth = width / bufferLength
-          let x = 0
+          ctx.fillStyle = '#ffffff'
           
-          for (let i = 0; i < bufferLength; i++) {
-            const v = dataArray[i] / 128.0
-            const y = (v * height) / 2
+          for (let i = 0; i < barCount; i++) {
+            // Sample data points across the frequency spectrum
+            const dataIndex = Math.floor((i / barCount) * bufferLength)
+            const barHeight = (dataArray[dataIndex] / 255) * height * 0.8
             
-            if (i === 0) {
-              ctx.moveTo(x, y)
+            const x = i * (barWidth + barSpacing)
+            const y = height - barHeight
+            
+            // Create rounded rectangle bars (with fallback for browser compatibility)
+            if (ctx.roundRect) {
+              ctx.beginPath()
+              ctx.roundRect(x, y, barWidth, barHeight, barWidth / 2)
+              ctx.fill()
             } else {
-              ctx.lineTo(x, y)
+              // Fallback for browsers that don't support roundRect
+              ctx.fillRect(x, y, barWidth, barHeight)
             }
-            
-            x += sliceWidth
           }
-          
-          ctx.stroke()
 
           if (isRecording) {
             animationRef.current = requestAnimationFrame(drawWaveform)
