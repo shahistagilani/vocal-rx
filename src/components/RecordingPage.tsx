@@ -183,7 +183,10 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ transcript }),
+        body: JSON.stringify({ 
+          transcript,
+          patientInfo: mockPatientData
+        }),
       })
 
       if (!response.ok) {
@@ -191,7 +194,19 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
       }
 
       const extractedData = await response.json()
-      setEditedData({ ...extractedData })
+      // Include patient information as read-only data
+      const prescriptionWithPatient = {
+        ...extractedData,
+        patient: {
+          id: mockPatientData.id,
+          name: mockPatientData.name,
+          age: mockPatientData.age,
+          gender: mockPatientData.gender,
+          conditions: mockPatientData.conditions
+        },
+        originalTranscript: transcript
+      }
+      setEditedData(prescriptionWithPatient)
       setHasExtracted(true)
     } catch (error) {
       console.error('Error extracting prescription:', error)
@@ -373,6 +388,49 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
             {hasExtracted && editedData && (
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-6">Prescription Data</h3>
+
+                {/* Patient Information - Read Only */}
+                {editedData.patient && (
+                  <div className="mb-6 bg-gray-50 rounded-lg p-4">
+                    <h4 className="text-sm font-medium text-gray-700 mb-3">Patient Information</h4>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="font-medium text-gray-600">Name:</span> {editedData.patient.name}
+                      </div>
+                      <div>
+                        <span className="font-medium text-gray-600">ID:</span> {editedData.patient.id}
+                      </div>
+                      <div>
+                        <span className="font-medium text-gray-600">Age:</span> {editedData.patient.age} years
+                      </div>
+                      <div>
+                        <span className="font-medium text-gray-600">Gender:</span> {editedData.patient.gender}
+                      </div>
+                    </div>
+                    {editedData.patient.conditions && editedData.patient.conditions.length > 0 && (
+                      <div className="mt-3">
+                        <span className="font-medium text-gray-600">Known Conditions:</span>
+                        <div className="flex flex-wrap gap-2 mt-1">
+                          {editedData.patient.conditions.map((condition: string, index: number) => (
+                            <span key={index} className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs">
+                              {condition}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Original Transcript */}
+                {editedData.originalTranscript && (
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Original Transcript</label>
+                    <div className="bg-gray-50 rounded-lg p-3 text-sm text-gray-700 max-h-32 overflow-y-auto">
+                      {editedData.originalTranscript}
+                    </div>
+                  </div>
+                )}
 
                 {/* Clinical Findings */}
                 <div className="mb-6">
