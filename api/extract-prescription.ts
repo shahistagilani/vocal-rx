@@ -70,93 +70,77 @@ Return JSON with this schema:
 }`
 
 async function extractPrescriptionData(transcript: string): Promise<PrescriptionData> {
-  // Mock extraction logic - replace with actual LLM API call
-  const lowerTranscript = transcript.toLowerCase()
+  const OPENAI_API_KEY = process.env.OPENAI_API_KEY
   
-  // Extract chief complaints
-  let chiefComplaints: string | null = null
-  if (lowerTranscript.includes('chest pain')) {
-    chiefComplaints = 'Chest pain and shortness of breath'
-  } else if (lowerTranscript.includes('headache')) {
-    chiefComplaints = 'Headache'
+  if (!OPENAI_API_KEY) {
+    throw new Error('OpenAI API key not configured')
   }
 
-  // Extract clinical findings
-  let clinicalFindings: string | null = null
-  if (lowerTranscript.includes('bp') || lowerTranscript.includes('blood pressure')) {
-    clinicalFindings = 'BP 140/90, HR 88, RR 18, Temp 98.6'
-  }
+  const prompt = EXTRACTION_PROMPT.replace('{{transcript}}', transcript)
 
-  // Extract diagnosis
-  let diagnosis: string | null = null
-  if (lowerTranscript.includes('angina')) {
-    diagnosis = 'Possible angina, rule out MI'
-  } else if (lowerTranscript.includes('hypertension')) {
-    diagnosis = 'Essential hypertension'
-  }
-
-  // Extract investigations
-  const investigations: string[] = []
-  if (lowerTranscript.includes('ecg')) {
-    investigations.push('ECG')
-  }
-  if (lowerTranscript.includes('cardiac enzymes')) {
-    investigations.push('Cardiac enzymes')
-  }
-  if (lowerTranscript.includes('blood test')) {
-    investigations.push('Complete blood count')
-  }
-
-  // Extract medicines
-  const medicines: Medicine[] = []
-  if (lowerTranscript.includes('aspirin')) {
-    medicines.push({
-      brand_name: null,
-      generic_name: 'Aspirin',
-      dosage: '325mg',
-      frequency: 'daily',
-      route: 'oral',
-      duration: null,
-      remarks: null
+  try {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a medical AI assistant specialized in extracting structured prescription data from doctor dictations. Always respond with valid JSON only.'
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        temperature: 0.1,
+        max_tokens: 2000,
+      }),
     })
-  }
-  if (lowerTranscript.includes('nitroglycerin')) {
-    medicines.push({
-      brand_name: null,
-      generic_name: 'Nitroglycerin',
-      dosage: null,
-      frequency: 'PRN',
-      route: 'sublingual',
-      duration: null,
-      remarks: 'for chest pain'
-    })
-  }
 
-  // Extract advice
-  const advice: Advice = {
-    diet: null,
-    exercise: null,
-    sleep: null,
-    other: 'Follow up in 1 week'
-  }
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.status}`)
+    }
 
-  // Extract followup date
-  let followupDate: string | null = null
-  if (lowerTranscript.includes('follow up') || lowerTranscript.includes('followup')) {
-    // Set followup to 1 week from now
-    const date = new Date()
-    date.setDate(date.getDate() + 7)
-    followupDate = date.toISOString().split('T')[0]
-  }
+    const data = await response.json()
+    const content = data.choices?.[0]?.message?.content
 
-  return {
-    chief_complaints: chiefComplaints,
-    clinical_findings: clinicalFindings,
-    diagnosis: diagnosis,
-    prescribed_investigations: investigations,
-    medicines: medicines,
-    advice: advice,
-    followup_date: followupDate
+    if (!content) {
+      throw new Error('No response from OpenAI')
+    }
+
+    // Parse the JSON response
+    const extractedData = JSON.parse(content) as PrescriptionData
+    
+    // Validate the structure
+    if (!extractedData || typeof extractedData !== 'object') {
+      throw new Error('Invalid response format from LLM')
+    }
+
+    return extractedData
+
+  } catch (error) {
+    console.error('LLM extraction error:', error)
+    
+    // Fallback to basic extraction if LLM fails
+    return {
+      chief_complaints: transcript.length > 50 ? transcript.substring(0, 100) + '...' : transcript,
+      clinical_findings: null,
+      diagnosis: null,
+      prescribed_investigations: [],
+      medicines: [],
+      advice: {
+        diet: null,
+        exercise: null,
+        sleep: null,
+        other: null
+      },
+      followup_date: null
+    }
   }
 }
 
