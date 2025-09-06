@@ -801,7 +801,7 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
         </div>
     </div>
 </body>
-</html>
+</html> `;
 
     // Navigate to the prescription preview page
     navigate('/prescription-preview', { state: { prescriptionHtml: prescriptionTemplate } });
@@ -1181,3 +1181,4 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
     </div>
   )
 }
+        
