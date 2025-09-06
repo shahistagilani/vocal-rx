@@ -275,6 +275,9 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
         .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px; }
         .logo { width: 60px; height: 60px; margin: 0 auto 10px; background: #2c5aa0; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; font-weight: bold; }
         .tagline { font-size: 14px; color: #666; margin-bottom: 15px; font-style: italic; }
+        .header-content { display: flex; justify-content: space-between; text-align: left; margin-top: 15px; }
+        .doctor-section { flex: 1; padding-right: 20px; }
+        .clinic-section { flex: 1; padding-left: 20px; }
         .doctor-name { font-size: 20px; font-weight: bold; color: #333; margin-bottom: 5px; }
         .doctor-qualification { font-size: 14px; color: #666; margin-bottom: 5px; }
         .doctor-registration { font-size: 12px; color: #666; margin-bottom: 15px; }
@@ -288,12 +291,14 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
         .info-line { margin-bottom: 5px; }
         .section { margin: 15px 0; }
         .section-title { font-weight: bold; margin-bottom: 5px; text-decoration: underline; }
-        .vitals { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .vitals { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e9ecef; }
+        .vital-item { padding: 8px; background: white; border-radius: 5px; border: 1px solid #dee2e6; }
         .medicine-item { margin-bottom: 8px; }
         .medicine-line { font-weight: bold; }
         .medicine-dosage { margin-left: 20px; }
         .signature { margin-top: 60px; text-align: right; }
         .signature-line { border-top: 1px solid #333; width: 200px; margin-left: auto; padding-top: 10px; text-align: center; }
+        .handwritten-signature { font-family: 'Brush Script MT', cursive, 'Dancing Script', serif; font-size: 24px; color: #2c5aa0; font-weight: bold; transform: rotate(-2deg); margin-bottom: 5px; }
         @media print { body { margin: 0; } }
     </style>
 </head>
@@ -301,14 +306,20 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
     <div class="header">
         <div class="logo">HC</div>
         <div class="tagline">Healing begins with a conversation. Turning voices into care.</div>
-        <div class="doctor-name">${mockDoctorData.name}</div>
-        <div class="doctor-qualification">${mockDoctorData.qualification}</div>
-        <div class="doctor-registration">Medical Registration Number: ${mockDoctorData.registrationNumber}</div>
-        <div class="clinic-name">${mockClinicData.name}</div>
-        <div class="clinic-address">${mockClinicData.address}</div>
-        <div class="clinic-timings">Timings: ${mockClinicData.timings}</div>
-        <div class="clinic-timings">Closed on: ${mockClinicData.closedOn}</div>
-        <div class="clinic-phone">Phone Numbers: ${mockClinicData.phone}</div>
+        <div class="header-content">
+            <div class="doctor-section">
+                <div class="doctor-name">${mockDoctorData.name}</div>
+                <div class="doctor-qualification">${mockDoctorData.qualification}</div>
+                <div class="doctor-registration">Medical Registration Number: ${mockDoctorData.registrationNumber}</div>
+            </div>
+            <div class="clinic-section">
+                <div class="clinic-name">${mockClinicData.name}</div>
+                <div class="clinic-address">${mockClinicData.address}</div>
+                <div class="clinic-timings">Timings: ${mockClinicData.timings}</div>
+                <div class="clinic-timings">Closed on: ${mockClinicData.closedOn}</div>
+                <div class="clinic-phone">Phone Numbers: ${mockClinicData.phone}</div>
+            </div>
+        </div>
     </div>
 
     <div class="patient-info">
@@ -326,10 +337,10 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
     <div class="section">
         <div class="section-title">Vitals:</div>
         <div class="vitals">
-            <div><strong>Body Temp:</strong> ${mockPatientData.vitals.temperature}</div>
-            <div><strong>Blood Pressure:</strong> ${mockPatientData.vitals.bloodPressure}</div>
-            <div><strong>Height:</strong> ${mockPatientData.vitals.height}</div>
-            <div><strong>Weight:</strong> ${mockPatientData.vitals.weight}</div>
+            <div class="vital-item"><strong>Body Temperature:</strong> ${mockPatientData.vitals.temperature}</div>
+            <div class="vital-item"><strong>Blood Pressure:</strong> ${mockPatientData.vitals.bloodPressure}</div>
+            <div class="vital-item"><strong>Height:</strong> ${mockPatientData.vitals.height}</div>
+            <div class="vital-item"><strong>Weight:</strong> ${mockPatientData.vitals.weight}</div>
         </div>
     </div>
 
@@ -340,7 +351,7 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
 
     <div class="section">
         <div class="section-title">Notes:</div>
-        <div>${editedData.clinical_findings || ''}</div>
+        <div>${editedData.notes || ''}</div>
     </div>
 
     <div class="section">
@@ -395,7 +406,7 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
 
     <div class="signature">
         <div class="signature-line">
-            <strong>${mockDoctorData.signature}</strong><br>
+            <div class="handwritten-signature">Dr. ${mockDoctorData.name.split(' ')[1] || mockDoctorData.name}</div>
             <small>Doctor's Signature</small>
         </div>
     </div>
