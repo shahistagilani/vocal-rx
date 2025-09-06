@@ -35,7 +35,7 @@ export default function HomePage({ onStartRecording }: HomePageProps) {
 
         {/* Tagline */}
         <p className="text-xl md:text-2xl text-gray-700 mb-12 leading-relaxed">
-          Transform your voice into structured prescriptions with AI-powered medical transcription
+        Healing begins with a conversation. Turning voices into care.
         </p>
 
         {/* How It Works */}
@@ -91,6 +91,38 @@ export default function HomePage({ onStartRecording }: HomePageProps) {
           </div>
         </div>
 
+        {/* Features */}
+        <div className="grid md:grid-cols-3 gap-6 mb-12">
+          <div className="bg-white/70 backdrop-blur-sm rounded-xl p-6 shadow-sm">
+            <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <h3 className="font-semibold text-gray-900 mb-2">Voice Recording</h3>
+            <p className="text-gray-600 text-sm">Real-time audio capture</p>
+          </div>
+
+          <div className="bg-white/70 backdrop-blur-sm rounded-xl p-6 shadow-sm">
+            <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <h3 className="font-semibold text-gray-900 mb-2">AI Transcription</h3>
+            <p className="text-gray-600 text-sm">Powered by AI for accurate medical speech-to-text</p>
+          </div>
+
+          <div className="bg-white/70 backdrop-blur-sm rounded-xl p-6 shadow-sm">
+            <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+            </div>
+            <h3 className="font-semibold text-gray-900 mb-2">Smart Extraction</h3>
+            <p className="text-gray-600 text-sm">AI extracts structured prescription data automatically</p>
+          </div>
+        </div>
 
         {/* CTA Button */}
         <button
