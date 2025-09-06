@@ -581,6 +581,29 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
                   </div>
                 )}
 
+                {/* Chief Complaints */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Chief Complaints</label>
+                  <textarea
+                    value={editedData.chief_complaints || ''}
+                    onChange={(e) => handleInputChange('chief_complaints', e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    rows={3}
+                    placeholder="Patient's main complaints..."
+                  />
+                </div>
+
+                {/* Notes */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Notes</label>
+                  <textarea
+                    value={editedData.notes || ''}
+                    onChange={(e) => handleInputChange('notes', e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    rows={3}
+                    placeholder="Additional notes..."
+                  />
+                </div>
 
                 {/* Clinical Findings */}
                 <div className="mb-6">
@@ -591,6 +614,18 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     rows={3}
                     placeholder="Physical examination findings..."
+                  />
+                </div>
+
+                {/* Prescribed Investigation */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Prescribed Investigation</label>
+                  <textarea
+                    value={editedData.prescribed_investigation || ''}
+                    onChange={(e) => handleInputChange('prescribed_investigation', e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    rows={3}
+                    placeholder="Lab tests, imaging, or other investigations..."
                   />
                 </div>
 
@@ -698,6 +733,13 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
                       placeholder="Exercise advice"
                       value={editedData.advice?.exercise || ''}
                       onChange={(e) => handleAdviceChange('exercise', e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Sleep advice"
+                      value={editedData.advice?.sleep || ''}
+                      onChange={(e) => handleAdviceChange('sleep', e.target.value)}
                       className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
                     />
                     <input
