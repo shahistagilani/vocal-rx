@@ -1,57 +1,23 @@
-import { useEffect, useRef, useState } from 'react'
-import WaveSurfer from 'wavesurfer.js'
+import { useEffect, useRef } from 'react'
 
 interface WaveformVisualizerProps {
   isRecording: boolean
   mediaStream?: MediaStream | null
-  onVisualizerReady?: (wavesurfer: WaveSurfer) => void
 }
 
 export const WaveformVisualizer = ({ 
   isRecording, 
-  mediaStream, 
-  onVisualizerReady 
+  mediaStream
 }: WaveformVisualizerProps) => {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const wavesurferRef = useRef<WaveSurfer | null>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
   const audioContextRef = useRef<AudioContext | null>(null)
   const analyserRef = useRef<AnalyserNode | null>(null)
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null)
   const animationRef = useRef<number | null>(null)
-  const [isInitialized, setIsInitialized] = useState(false)
-
-  // Initialize WaveSurfer
-  useEffect(() => {
-    if (!containerRef.current || wavesurferRef.current) return
-
-    const wavesurfer = WaveSurfer.create({
-      container: containerRef.current,
-      waveColor: '#f97316', // Orange color matching the theme
-      progressColor: '#ea580c',
-      cursorColor: '#dc2626',
-      barWidth: 3,
-      barRadius: 3,
-      height: 80,
-      normalize: true,
-      backend: 'WebAudio',
-      mediaControls: false,
-    })
-
-    wavesurferRef.current = wavesurfer
-    setIsInitialized(true)
-    onVisualizerReady?.(wavesurfer)
-
-    return () => {
-      if (wavesurferRef.current) {
-        wavesurferRef.current.destroy()
-        wavesurferRef.current = null
-      }
-    }
-  }, [onVisualizerReady])
 
   // Setup live audio visualization
   useEffect(() => {
-    if (!isRecording || !mediaStream || !isInitialized) {
+    if (!isRecording || !mediaStream) {
       // Clean up when not recording
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current)
@@ -61,7 +27,7 @@ export const WaveformVisualizer = ({
         sourceRef.current.disconnect()
         sourceRef.current = null
       }
-      if (audioContextRef.current) {
+      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
         audioContextRef.current.close()
         audioContextRef.current = null
       }
@@ -71,13 +37,25 @@ export const WaveformVisualizer = ({
 
     const setupLiveVisualization = async () => {
       try {
+        const canvas = canvasRef.current
+        if (!canvas) return
+
+        // Set canvas size
+        const rect = canvas.getBoundingClientRect()
+        canvas.width = rect.width * window.devicePixelRatio
+        canvas.height = rect.height * window.devicePixelRatio
+        const ctx = canvas.getContext('2d')
+        if (!ctx) return
+
+        ctx.scale(window.devicePixelRatio, window.devicePixelRatio)
+
         // Create audio context and analyser
         const audioContext = new AudioContext()
         const analyser = audioContext.createAnalyser()
         const source = audioContext.createMediaStreamSource(mediaStream)
         
-        analyser.fftSize = 256
-        analyser.smoothingTimeConstant = 0.8
+        analyser.fftSize = 2048
+        analyser.smoothingTimeConstant = 0.3
         
         source.connect(analyser)
         
@@ -90,43 +68,43 @@ export const WaveformVisualizer = ({
 
         // Create a function to draw the waveform
         const drawWaveform = () => {
-          if (!analyserRef.current || !wavesurferRef.current) return
+          if (!analyserRef.current || !canvasRef.current) return
+
+          const canvas = canvasRef.current
+          const ctx = canvas.getContext('2d')
+          if (!ctx) return
 
           analyser.getByteTimeDomainData(dataArray)
           
-          // Create a simple waveform visualization
-          // Since WaveSurfer expects audio buffer, we'll simulate it
-          const canvas = containerRef.current?.querySelector('canvas')
-          if (canvas) {
-            const ctx = canvas.getContext('2d')
-            if (ctx) {
-              const width = canvas.width
-              const height = canvas.height
-              
-              ctx.clearRect(0, 0, width, height)
-              ctx.strokeStyle = '#f97316'
-              ctx.lineWidth = 2
-              ctx.beginPath()
-              
-              const sliceWidth = width / bufferLength
-              let x = 0
-              
-              for (let i = 0; i < bufferLength; i++) {
-                const v = dataArray[i] / 128.0
-                const y = v * height / 2
-                
-                if (i === 0) {
-                  ctx.moveTo(x, y)
-                } else {
-                  ctx.lineTo(x, y)
-                }
-                
-                x += sliceWidth
-              }
-              
-              ctx.stroke()
+          const width = canvas.width / window.devicePixelRatio
+          const height = canvas.height / window.devicePixelRatio
+          
+          // Clear canvas
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.1)'
+          ctx.fillRect(0, 0, width, height)
+          
+          // Draw waveform
+          ctx.lineWidth = 2
+          ctx.strokeStyle = '#f97316'
+          ctx.beginPath()
+          
+          const sliceWidth = width / bufferLength
+          let x = 0
+          
+          for (let i = 0; i < bufferLength; i++) {
+            const v = dataArray[i] / 128.0
+            const y = (v * height) / 2
+            
+            if (i === 0) {
+              ctx.moveTo(x, y)
+            } else {
+              ctx.lineTo(x, y)
             }
+            
+            x += sliceWidth
           }
+          
+          ctx.stroke()
 
           if (isRecording) {
             animationRef.current = requestAnimationFrame(drawWaveform)
@@ -148,20 +126,20 @@ export const WaveformVisualizer = ({
       if (sourceRef.current) {
         sourceRef.current.disconnect()
       }
-      if (audioContextRef.current) {
+      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
         audioContextRef.current.close()
       }
     }
-  }, [isRecording, mediaStream, isInitialized])
+  }, [isRecording, mediaStream])
 
   return (
     <div className="w-full">
-      <div 
-        ref={containerRef} 
-        className={`w-full transition-opacity duration-300 ${
+      <canvas 
+        ref={canvasRef}
+        className={`w-full bg-slate-50 rounded-lg transition-opacity duration-300 ${
           isRecording ? 'opacity-100' : 'opacity-50'
         }`}
-        style={{ minHeight: '80px' }}
+        style={{ height: '80px' }}
       />
       {isRecording && (
         <div className="text-center mt-2">
