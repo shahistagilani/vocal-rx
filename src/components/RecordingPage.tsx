@@ -147,6 +147,25 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
     }, 100)
   }
 
+  const continueDictation = () => {
+    // Stop current recording if active
+    if (isRecording) {
+      stopRecording()
+    }
+    
+    // Don't reset transcript - keep existing content
+    setEditedData(null)
+    setHasExtracted(false)
+    setIsExtracting(false)
+    setIsProcessing(false)
+    resetTimer()
+    
+    // Start new recording that will append to existing transcript
+    setTimeout(() => {
+      startRecording()
+    }, 100)
+  }
+
   const uploadAudio = async (audioBlob: Blob) => {
     try {
       const response = await fetch('/api/transcribe-audio', {
@@ -906,11 +925,25 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
                     placeholder="Your prescription transcript will appear here and can be edited..."
                   />
                 </div>
-                <div className="mt-4 flex space-x-3">
+                <div className="mt-4 space-y-3">
+                  <div className="flex space-x-3">
+                    <button
+                      onClick={restartRecording}
+                      className="flex-1 border border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold py-2 px-4 rounded-lg transition-colors"
+                    >
+                      Record Again
+                    </button>
+                    <button
+                      onClick={continueDictation}
+                      className="flex-1 border border-orange-300 text-orange-700 hover:bg-orange-50 font-semibold py-2 px-4 rounded-lg transition-colors"
+                    >
+                      Continue Dictation
+                    </button>
+                  </div>
                   <button
                     onClick={extractPrescription}
                     disabled={isExtracting}
-                    className="flex-1 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded-lg transition-colors flex items-center justify-center"
+                    className="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded-lg transition-colors flex items-center justify-center"
                   >
                     {isExtracting ? (
                       <>
@@ -923,12 +956,6 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
                     ) : (
                       'Extract Prescription'
                     )}
-                  </button>
-                  <button
-                    onClick={restartRecording}
-                    className="flex-1 border border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold py-2 px-4 rounded-lg transition-colors"
-                  >
-                    Record Again
                   </button>
                 </div>
               </div>
