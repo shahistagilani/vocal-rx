@@ -263,139 +263,499 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
     }))
   }
 
-  const generatePrescription = () => {
+    const generatePrescription = () => {
     // Create comprehensive prescription template
     const prescriptionTemplate = `
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Medical Prescription</title>
+    <meta charset="UTF-8">
+    <title>Medical Prescription - ${mockPatientData.name}</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px 40px; line-height: 1.4; }
-        .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px; }
-        .logo { width: 60px; height: 60px; margin: 0 auto 10px; background: #2c5aa0; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; font-weight: bold; }
-        .tagline { font-size: 14px; color: #666; margin-bottom: 15px; font-style: italic; }
-        .header-content { display: flex; justify-content: space-between; text-align: left; margin-top: 15px; }
-        .doctor-section { flex: 1; padding-right: 20px; }
-        .clinic-section { flex: 1; padding-left: 20px; }
-        .doctor-name { font-size: 20px; font-weight: bold; color: #333; margin-bottom: 5px; }
-        .doctor-qualification { font-size: 14px; color: #666; margin-bottom: 5px; }
-        .doctor-registration { font-size: 12px; color: #666; margin-bottom: 15px; }
-        .clinic-name { font-size: 18px; font-weight: bold; color: #2c5aa0; margin-bottom: 5px; }
-        .clinic-address { font-size: 12px; color: #666; margin-bottom: 3px; }
-        .clinic-timings { font-size: 12px; color: #666; margin-bottom: 3px; }
-        .clinic-phone { font-size: 12px; color: #666; }
-        .patient-info { display: flex; justify-content: space-between; margin: 20px 0; padding: 10px 0; border-bottom: 1px solid #ddd; }
-        .patient-left { flex: 1; }
-        .patient-right { flex: 1; text-align: right; }
-        .info-line { margin-bottom: 5px; }
-        .section { margin: 15px 0; }
-        .section-title { font-weight: bold; margin-bottom: 5px; text-decoration: underline; }
-        .vitals { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e9ecef; }
-        .vital-item { padding: 8px; background: white; border-radius: 5px; border: 1px solid #dee2e6; }
-        .medicine-item { margin-bottom: 8px; }
-        .medicine-line { font-weight: bold; }
-        .medicine-dosage { margin-left: 20px; }
-        .signature { margin-top: 60px; text-align: right; }
-        .signature-line { width: 200px; margin-left: auto; text-align: center; }
-        .handwritten-signature { font-family: 'Brush Script MT', cursive, 'Dancing Script', serif; font-size: 24px; color: #2c5aa0; font-weight: bold; transform: rotate(-2deg); margin-bottom: 10px; }
-        .signature-border { border-top: 1px solid #333; padding-top: 5px; }
-        @media print { body { margin: 0; } }
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Playfair+Display:wght@400;500;700&display=swap');
+        
+        body { 
+            font-family: 'Roboto', Arial, sans-serif; 
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
+            background-color: #fff;
+        }
+        .prescription-container {
+            max-width: 8.5in;
+            margin: 0 auto;
+            padding: 40px;
+            background: #fff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .header { 
+            text-align: center; 
+            padding-bottom: 20px; 
+            margin-bottom: 30px;
+            border-bottom: 2px solid #2c5aa0;
+            position: relative;
+        }
+        .logo { 
+            width: 80px; 
+            height: 80px; 
+            margin: 0 auto 10px; 
+            background: #2c5aa0; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: white; 
+            font-size: 24px; 
+            font-weight: bold;
+            font-family: 'Playfair Display', serif;
+        }
+        .tagline { 
+            font-size: 14px; 
+            color: #666; 
+            margin: 10px 0 20px;
+            font-style: italic;
+            letter-spacing: 0.5px;
+        }
+        .header-content { 
+            display: flex; 
+            justify-content: space-between; 
+            text-align: left; 
+            margin-top: 20px;
+        }
+        .doctor-section { 
+            flex: 1; 
+            padding-right: 30px;
+            border-right: 1px solid #eee;
+        }
+        .clinic-section { 
+            flex: 1; 
+            padding-left: 30px;
+        }
+        .doctor-name { 
+            font-family: 'Playfair Display', serif;
+            font-size: 22px; 
+            font-weight: 700; 
+            color: #2c5aa0; 
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        .doctor-qualification { 
+            font-size: 14px; 
+            color: #555; 
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .doctor-registration { 
+            font-size: 12px; 
+            color: #777; 
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+        .clinic-name { 
+            font-family: 'Playfair Display', serif;
+            font-size: 20px; 
+            font-weight: 700; 
+            color: #2c5aa0; 
+            margin-bottom: 8px;
+        }
+        .clinic-address, .clinic-timings, .clinic-phone { 
+            font-size: 12px; 
+            color: #555; 
+            margin-bottom: 5px;
+            line-height: 1.5;
+        }
+        .patient-info { 
+            display: flex; 
+            justify-content: space-between; 
+            margin: 25px 0; 
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .patient-left, .patient-right { 
+            flex: 1; 
+            padding: 0 15px;
+        }
+        .patient-right {
+            border-left: 1px solid #e2e8f0;
+        }
+        .info-line { 
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .info-line strong {
+            color: #2c5aa0;
+            min-width: 150px;
+            display: inline-block;
+        }
+        .section { 
+            margin: 20px 0;
+            page-break-inside: avoid;
+        }
+        .section-title { 
+            font-family: 'Playfair Display', serif;
+            font-weight: 600; 
+            margin-bottom: 10px; 
+            color: #2c5aa0;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 5px;
+        }
+        .vitals { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px; 
+            margin: 15px 0;
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .vital-item { 
+            padding: 12px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .vital-item strong {
+            color: #2c5aa0;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Medicine Styles */
+        .medicines {
+            margin-top: 10px;
+        }
+        
+        .medicine-item {
+            margin-bottom: 15px;
+            padding: 12px 15px;
+            background: #fff;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+        
+        .medicine-item:hover {
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transform: translateY(-1px);
+        }
+        
+        .medicine-line {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        
+        .medicine-number {
+            background: #2c5aa0;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        
+        .medicine-dosage {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-left: 36px;
+            color: #4b5563;
+            font-size: 13.5px;
+        }
+        
+        .medicine-dosage span {
+            display: flex;
+            align-items: center;
+        }
+        
+        .medicine-dosage strong {
+            color: #2c5aa0;
+            font-weight: 500;
+            margin-right: 5px;
+            min-width: auto;
+        }
+        
+        .no-meds {
+            color: #64748b;
+            font-style: italic;
+            padding: 10px 0;
+        }
+        
+        /* Signature Styles */
+        .signature {
+            margin-top: 60px;
+            text-align: right;
+        }
+        
+        .signature-line {
+            display: inline-block;
+            text-align: center;
+            margin-left: auto;
+            border-top: 1px solid #2c5aa0;
+            padding-top: 8px;
+            min-width: 250px;
+        }
+        
+        .handwritten-signature {
+            font-family: 'Dancing Script', 'Brush Script MT', cursive, serif;
+            font-size: 28px;
+            color: #2c5aa0;
+            margin-bottom: 5px;
+            line-height: 1;
+            transform: rotate(-2deg);
+        }
+        
+        /* Footer Styles */
+        .footer {
+            margin-top: 60px;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 11px;
+            color: #64748b;
+            text-align: center;
+            line-height: 1.5;
+        }
+        
+        .footer p {
+            margin: 5px 0;
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .prescription-container {
+                padding: 20px;
+            }
+            
+            .header-content {
+                flex-direction: column;
+            }
+            
+            .doctor-section, .clinic-section {
+                padding: 0 !important;
+                border: none !important;
+                margin-bottom: 15px;
+            }
+            
+            .patient-info {
+                flex-direction: column;
+            }
+            
+            .patient-right {
+                border-left: none !important;
+                border-top: 1px solid #e2e8f0;
+                margin-top: 15px;
+                padding-top: 15px !important;
+            }
+            
+            .vitals {
+                grid-template-columns: 1fr 1fr !important;
+            }
+            
+            .medicine-dosage {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .vitals {
+                grid-template-columns: 1fr !important;
+            }
+        }
+        
+        @media print { 
+            body { 
+                margin: 0;
+                padding: 0;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .prescription-container {
+                padding: 20px;
+                box-shadow: none;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="logo">HC</div>
-        <div class="tagline">Healing begins with a conversation. Turning voices into care.</div>
-        <div class="header-content">
-            <div class="doctor-section">
-                <div class="doctor-name">${mockDoctorData.name}</div>
-                <div class="doctor-qualification">${mockDoctorData.qualification}</div>
-                <div class="doctor-registration">Medical Registration Number: ${mockDoctorData.registrationNumber}</div>
-            </div>
-            <div class="clinic-section">
-                <div class="clinic-name">${mockClinicData.name}</div>
-                <div class="clinic-address">${mockClinicData.address}</div>
-                <div class="clinic-timings">Timings: ${mockClinicData.timings}</div>
-                <div class="clinic-timings">Closed on: ${mockClinicData.closedOn}</div>
-                <div class="clinic-phone">Phone Numbers: ${mockClinicData.phone}</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="patient-info">
-        <div class="patient-left">
-            <div class="info-line"><strong>Patient ID:</strong> ${editedData.patient?.id || mockPatientData.id}</div>
-            <div class="info-line"><strong>Patient Name:</strong> ${editedData.patient?.name || mockPatientData.name}</div>
-            <div class="info-line"><strong>Age & ${editedData.patient?.gender || mockPatientData.gender} Indicator:</strong> ${editedData.patient?.age || mockPatientData.age} years, ${editedData.patient?.gender || mockPatientData.gender}</div>
-            <div class="info-line"><strong>Phone Number:</strong> ${mockPatientData.phone}</div>
-        </div>
-        <div class="patient-right">
-            <div class="info-line"><strong>Date of Prescription:</strong> ${getTodaysDate()}</div>
-        </div>
-    </div>
-
-    <div class="section">
-        <div class="section-title">Vitals:</div>
-        <div class="vitals">
-            <div class="vital-item"><strong>Body Temperature:</strong> ${mockPatientData.vitals.temperature}</div>
-            <div class="vital-item"><strong>Blood Pressure:</strong> ${mockPatientData.vitals.bloodPressure}</div>
-            <div class="vital-item"><strong>Height:</strong> ${mockPatientData.vitals.height}</div>
-            <div class="vital-item"><strong>Weight:</strong> ${mockPatientData.vitals.weight}</div>
-        </div>
-    </div>
-
-    <div class="section">
-        <div class="section-title">Chief Complaints:</div>
-        <div>${editedData.chief_complaints || ''}</div>
-    </div>
-
-    <div class="section">
-        <div class="section-title">Notes:</div>
-        <div>${editedData.notes || ''}</div>
-    </div>
-
-    <div class="section">
-        <div class="section-title">Clinical Findings:</div>
-        <div>${editedData.clinical_findings || ''}</div>
-    </div>
-
-    <div class="section">
-        <div class="section-title">Prescribed Investigation:</div>
-        <div>
-            ${editedData.prescribed_investigations?.length > 0 
-                ? editedData.prescribed_investigations.map((test: string) => `• ${test}`).join('<br>')
-                : ''
-            }
-        </div>
-    </div>
-
-    <div class="section">
-        <div class="section-title">Diagnosis:</div>
-        <div>${editedData.diagnosis || ''}</div>
-    </div>
-
-    <div class="section">
-        <div class="section-title">Rx Medicine:</div>
-        ${editedData.medicines?.length > 0 
-            ? editedData.medicines.map((med: any, index: number) => `
-                <div class="medicine-item">
-                    <div class="medicine-line">${index + 1}. ${med.brand_name || 'Medicine Name'}</div>
-                    <div class="medicine-dosage">${med.dosage || '_____'} | ${med.duration || '_____'}</div>
+    <div class="prescription-container">
+        <div class="header">
+            <div class="logo">HC+</div>
+            <div class="tagline">Healing begins with a conversation. Turning voices into care.</div>
+            <div class="header-content">
+                <div class="doctor-section">
+                    <div class="doctor-name">${mockDoctorData.name}</div>
+                    <div class="doctor-qualification">${mockDoctorData.qualification}</div>
+                    <div class="doctor-registration">License: ${mockDoctorData.registrationNumber}</div>
                 </div>
-            `).join('')
-            : '<div class="medicine-item">No medicines prescribed</div>'
-        }
-    </div>
+                <div class="clinic-section">
+                    <div class="clinic-name">${mockClinicData.name}</div>
+                    <div class="clinic-address">${mockClinicData.address}</div>
+                    <div class="clinic-timings">Hours: ${mockClinicData.timings}</div>
+                    <div class="clinic-phone">Contact: ${mockClinicData.phone}</div>
+                </div>
+            </div>
+        </div>
 
-    <div class="section">
-        <div class="section-title">Advice:</div>
-        <div>
-            ${editedData.advice?.diet ? `<div><strong>Diet:</strong> ${editedData.advice.diet}</div>` : ''}
-            ${editedData.advice?.exercise ? `<div><strong>Exercise:</strong> ${editedData.advice.exercise}</div>` : ''}
-            ${editedData.advice?.sleep ? `<div><strong>Sleep:</strong> ${editedData.advice.sleep}</div>` : ''}
-            ${editedData.advice?.other ? `<div><strong>Other:</strong> ${editedData.advice.other}</div>` : ''}
-            ${!editedData.advice?.diet && !editedData.advice?.exercise && !editedData.advice?.sleep && !editedData.advice?.other ? 'No specific advice given' : ''}
+        <div class="patient-info">
+            <div class="patient-left">
+                <div class="info-line"><strong>Patient ID:</strong> ${editedData.patient?.id || mockPatientData.id}</div>
+                <div class="info-line"><strong>Name:</strong> ${editedData.patient?.name || mockPatientData.name}</div>
+                <div class="info-line"><strong>Age/Gender:</strong> ${editedData.patient?.age || mockPatientData.age} years, ${editedData.patient?.gender || mockPatientData.gender}</div>
+                <div class="info-line"><strong>Phone:</strong> ${mockPatientData.phone}</div>
+            </div>
+            <div class="patient-right">
+                <div class="info-line"><strong>Date:</strong> ${getTodaysDate()}</div>
+                <div class="info-line"><strong>Time:</strong> ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</div>
+                <div class="info-line"><strong>Visit:</strong> #${Math.floor(Math.random() * 1000).toString().padStart(4, '0')}</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Vital Signs</div>
+            <div class="vitals">
+                <div class="vital-item">
+                    <strong>Blood Pressure</strong>
+                    <div>${mockPatientData.vitals.bloodPressure}</div>
+                </div>
+                <div class="vital-item">
+                    <strong>Heart Rate</strong>
+                    <div>${mockPatientData.vitals.heartRate}</div>
+                </div>
+                <div class="vital-item">
+                    <strong>Temperature</strong>
+                    <div>${mockPatientData.vitals.temperature}</div>
+                </div>
+                <div class="vital-item">
+                    <strong>Height/Weight</strong>
+                    <div>${mockPatientData.vitals.height} / ${mockPatientData.vitals.weight}</div>
+                </div>
+            </div>
+        </div>
+
+        ${editedData.chief_complaints ? `
+        <div class="section">
+            <div class="section-title">Chief Complaint</div>
+            <div class="complaint">
+                ${editedData.chief_complaints}
+            </div>
+        </div>
+        ` : ''}
+
+        ${editedData.notes ? `
+        <div class="section">
+            <div class="section-title">Clinical Notes</div>
+            <div class="notes">
+                ${editedData.notes.replace(/\n/g, '<br>')}
+            </div>
+        </div>
+        ` : ''}
+
+        ${editedData.clinical_findings ? `
+        <div class="section">
+            <div class="section-title">Examination Findings</div>
+            <div class="findings">
+                ${editedData.clinical_findings.replace(/\n/g, '<br>')}
+            </div>
+        </div>
+        ` : ''}
+
+        ${editedData.prescribed_investigations?.length > 0 ? `
+        <div class="section">
+            <div class="section-title">Diagnostic Tests</div>
+            <div class="investigations">
+                <ul style="margin: 0; padding-left: 20px;">
+                    ${editedData.prescribed_investigations.map((test: string) => 
+                        `<li>${test}</li>`
+                    ).join('')}
+                </ul>
+            </div>
+        </div>
+        ` : ''}
+
+        ${editedData.diagnosis ? `
+        <div class="section">
+            <div class="section-title">Diagnosis</div>
+            <div class="diagnosis">
+                ${editedData.diagnosis}
+            </div>
+        </div>
+        ` : ''}
+
+        <div class="section">
+            <div class="section-title">Prescription</div>
+            <div class="medicines">
+                ${editedData.medicines?.length > 0 
+                    ? editedData.medicines.map((med: any, index: number) => `
+                        <div class="medicine-item">
+                            <div class="medicine-line">
+                                <span class="medicine-number">${index + 1}</span>
+                                ${med.brand_name || 'Medicine Name'}
+                            </div>
+                            <div class="medicine-dosage">
+                                <span><strong>Dosage:</strong> ${med.dosage || 'As directed'}</span>
+                                <span><strong>Frequency:</strong> ${med.frequency || 'As needed'}</span>
+                                <span><strong>Route:</strong> ${med.route || 'Oral'}</span>
+                                <span><strong>Duration:</strong> ${med.duration || 'As directed'}</span>
+                                ${med.remarks ? `<span><strong>Notes:</strong> ${med.remarks}</span>` : ''}
+                            </div>
+                        </div>
+                    `).join('')
+                    : '<div class="no-meds">No medications prescribed.</div>'
+                }
+            </div>
+        </div>
+
+        ${(editedData.advice?.diet || editedData.advice?.exercise || editedData.advice?.sleep || editedData.advice?.other) ? `
+        <div class="section">
+            <div class="section-title">Patient Instructions</div>
+            <div class="instructions">
+                <ul style="margin: 0; padding-left: 20px;">
+                    ${editedData.advice?.diet ? `<li><strong>Diet:</strong> ${editedData.advice.diet}</li>` : ''}
+                    ${editedData.advice?.exercise ? `<li><strong>Exercise:</strong> ${editedData.advice.exercise}</li>` : ''}
+                    ${editedData.advice?.sleep ? `<li><strong>Sleep:</strong> ${editedData.advice.sleep}</li>` : ''}
+                    ${editedData.advice?.other ? `<li><strong>Other:</strong> ${editedData.advice.other}</li>` : ''}
+                </ul>
+            </div>
+        </div>
+        ` : ''}
+
+        <div class="signature">
+            <div class="signature-line">
+                <div class="handwritten-signature">${mockDoctorData.signature}</div>
+                <div class="signature-border"></div>
+                <div>${mockDoctorData.name}, ${mockDoctorData.qualification.split(',')[0]}</div>
+                <div>License: ${mockDoctorData.registrationNumber}</div>
+                <div>${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>This is an electronically generated prescription. No signature is required for validity.</p>
+            <p>&copy; ${new Date().getFullYear()} ${mockClinicData.name}. All rights reserved.</p>
         </div>
     </div>
 
