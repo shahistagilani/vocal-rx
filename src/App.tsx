@@ -94,37 +94,35 @@ function App() {
     }
   }
 
-  const uploadAudio = async (_audioBlob: Blob) => {
+  const uploadAudio = async (audioBlob: Blob) => {
     try {
-      // Simulate server upload and processing
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      // Send audio to Deepgram API for transcription
+      const response = await fetch('/api/transcribe-audio', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'audio/wav',
+        },
+        body: audioBlob,
+      })
+
+      if (!response.ok) {
+        throw new Error('Transcription failed')
+      }
+
+      const data = await response.json()
+      const transcribedText = data.transcript
+
+      if (!transcribedText) {
+        throw new Error('No transcript received')
+      }
       
-      // Part 4: Doctor's unique contribution per visit (voice captured)
-      const dummyTranscript = `Chest pain and shortness of breath for the past 2 days
-
-Patient reports substernal chest pain, worse with exertion, associated with mild shortness of breath. No radiation to arms or jaw. No nausea or diaphoresis.
-
-Mild chest discomfort on exertion, no resting pain. Heart sounds normal, no murmurs. Lungs clear bilaterally.
-
-Possible stable angina, rule out myocardial infarction
-
-1. Aspirin 75mg - Once daily - 30 days
-2. Atorvastatin 20mg - Once daily at bedtime - 30 days  
-3. Metoprolol 25mg - Twice daily - 30 days
-
-Low salt, low fat diet, avoid fried foods, increase omega-3 rich foods
-Light walking 30 minutes daily, avoid strenuous activity until follow-up
-7-8 hours adequate sleep, elevate head if experiencing chest discomfort
-
-${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN')} or sooner if symptoms worsen`
-      
-      setTranscript(prev => prev ? prev + '\n\n' + dummyTranscript : dummyTranscript)
+      setTranscript(prev => prev ? prev + '\n\n' + transcribedText : transcribedText)
       setShowTranscript(true)
       setIsProcessing(false)
     } catch (error) {
-      console.error('Error uploading audio:', error)
+      console.error('Error transcribing audio:', error)
       setIsProcessing(false)
-      alert('Error processing audio. Please try again.')
+      alert('Error transcribing audio. Please check your connection and try again.')
     }
   }
 
