@@ -35,7 +35,7 @@ export default function HomePage({ onStartRecording }: HomePageProps) {
               </svg>
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">Voice Recording</h3>
-            <p className="text-gray-600 text-sm">Real-time audio capture with live waveform visualization</p>
+            <p className="text-gray-600 text-sm">Real-time audio capture</p>
           </div>
 
           <div className="bg-white/70 backdrop-blur-sm rounded-xl p-6 shadow-sm">
@@ -45,7 +45,7 @@ export default function HomePage({ onStartRecording }: HomePageProps) {
               </svg>
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">AI Transcription</h3>
-            <p className="text-gray-600 text-sm">Powered by Deepgram for accurate medical speech-to-text</p>
+            <p className="text-gray-600 text-sm">Powered by AI for accurate medical speech-to-text</p>
           </div>
 
           <div className="bg-white/70 backdrop-blur-sm rounded-xl p-6 shadow-sm">
@@ -55,7 +55,7 @@ export default function HomePage({ onStartRecording }: HomePageProps) {
               </svg>
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">Smart Extraction</h3>
-            <p className="text-gray-600 text-sm">Gemini AI extracts structured prescription data automatically</p>
+            <p className="text-gray-600 text-sm">AI extracts structured prescription data automatically</p>
           </div>
         </div>
 
