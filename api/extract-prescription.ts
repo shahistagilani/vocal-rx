@@ -70,51 +70,58 @@ Return JSON with this schema:
 }`
 
 async function extractPrescriptionData(transcript: string): Promise<PrescriptionData> {
-  const OPENAI_API_KEY = process.env.OPENAI_API_KEY
+  const GEMINI_API_KEY = process.env.GEMINI_API_KEY
   
-  if (!OPENAI_API_KEY) {
-    throw new Error('OpenAI API key not configured')
+  if (!GEMINI_API_KEY) {
+    throw new Error('Gemini API key not configured')
   }
 
-  const prompt = EXTRACTION_PROMPT.replace('{{transcript}}', transcript)
+  const prompt = `You are a medical AI assistant specialized in extracting structured prescription data from doctor dictations. Always respond with valid JSON only.
+
+${EXTRACTION_PROMPT.replace('{{transcript}}', transcript)}`
 
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a medical AI assistant specialized in extracting structured prescription data from doctor dictations. Always respond with valid JSON only.'
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        temperature: 0.1,
-        max_tokens: 2000,
+        contents: [{
+          parts: [{
+            text: prompt
+          }]
+        }],
+        generationConfig: {
+          temperature: 0.1,
+          maxOutputTokens: 2000,
+          topP: 0.8,
+          topK: 10
+        }
       }),
     })
 
     if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status}`)
+      throw new Error(`Gemini API error: ${response.status}`)
     }
 
     const data = await response.json()
-    const content = data.choices?.[0]?.message?.content
+    const content = data.candidates?.[0]?.content?.parts?.[0]?.text
 
     if (!content) {
-      throw new Error('No response from OpenAI')
+      throw new Error('No response from Gemini')
+    }
+
+    // Clean up the response - remove markdown code blocks if present
+    let cleanContent = content.trim()
+    if (cleanContent.startsWith('```json')) {
+      cleanContent = cleanContent.replace(/^```json\s*/, '').replace(/\s*```$/, '')
+    } else if (cleanContent.startsWith('```')) {
+      cleanContent = cleanContent.replace(/^```\s*/, '').replace(/\s*```$/, '')
     }
 
     // Parse the JSON response
-    const extractedData = JSON.parse(content) as PrescriptionData
+    const extractedData = JSON.parse(cleanContent) as PrescriptionData
     
     // Validate the structure
     if (!extractedData || typeof extractedData !== 'object') {
