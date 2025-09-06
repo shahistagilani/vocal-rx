@@ -192,6 +192,7 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
       // Refine transcript via Gemini endpoint to standardize and clean up medical content
       let refinedText = ''
       try {
+        console.log('Calling refine-transcript API with transcript:', combinedForRefinement.substring(0, 100) + '...')
         const refineResp = await fetch('/api/refine-transcript', {
           method: 'POST',
           headers: {
@@ -199,11 +200,17 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
           },
           body: JSON.stringify({ transcript: combinedForRefinement }),
         })
+        
+        console.log('Refine API response status:', refineResp.status)
+        
         if (refineResp.ok) {
           const refineData = await refineResp.json()
+          console.log('Refine API response data:', refineData)
           refinedText = (refineData.refined || '').trim()
+          console.log('Refined text length:', refinedText.length)
         } else {
-          console.error('Refinement request failed')
+          const errorText = await refineResp.text()
+          console.error('Refinement request failed with status:', refineResp.status, 'Error:', errorText)
         }
       } catch (e) {
         console.error('Error refining transcript:', e)
