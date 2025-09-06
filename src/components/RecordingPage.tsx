@@ -271,7 +271,7 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
 <head>
     <title>Medical Prescription</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.4; }
+        body { font-family: Arial, sans-serif; margin: 20px 40px; line-height: 1.4; }
         .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px; }
         .logo { width: 60px; height: 60px; margin: 0 auto 10px; background: #2c5aa0; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; font-weight: bold; }
         .tagline { font-size: 14px; color: #666; margin-bottom: 15px; font-style: italic; }
@@ -297,8 +297,9 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
         .medicine-line { font-weight: bold; }
         .medicine-dosage { margin-left: 20px; }
         .signature { margin-top: 60px; text-align: right; }
-        .signature-line { border-top: 1px solid #333; width: 200px; margin-left: auto; padding-top: 10px; text-align: center; }
-        .handwritten-signature { font-family: 'Brush Script MT', cursive, 'Dancing Script', serif; font-size: 24px; color: #2c5aa0; font-weight: bold; transform: rotate(-2deg); margin-bottom: 5px; }
+        .signature-line { width: 200px; margin-left: auto; text-align: center; }
+        .handwritten-signature { font-family: 'Brush Script MT', cursive, 'Dancing Script', serif; font-size: 24px; color: #2c5aa0; font-weight: bold; transform: rotate(-2deg); margin-bottom: 10px; }
+        .signature-border { border-top: 1px solid #333; padding-top: 5px; }
         @media print { body { margin: 0; } }
     </style>
 </head>
@@ -379,9 +380,8 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
         ${editedData.medicines?.length > 0 
             ? editedData.medicines.map((med: any, index: number) => `
                 <div class="medicine-item">
-                    <div class="medicine-line">${index + 1}. ${med.brand_name || 'Medicine Name'}${med.generic_name ? ` (${med.generic_name})` : ''}</div>
+                    <div class="medicine-line">${index + 1}. ${med.brand_name || 'Medicine Name'}</div>
                     <div class="medicine-dosage">${med.dosage || '_____'} | ${med.duration || '_____'}</div>
-                    ${med.remarks ? `<div class="medicine-dosage" style="font-style: italic;">Note: ${med.remarks}</div>` : ''}
                 </div>
             `).join('')
             : '<div class="medicine-item">No medicines prescribed</div>'
@@ -407,7 +407,9 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
     <div class="signature">
         <div class="signature-line">
             <div class="handwritten-signature">Dr. ${mockDoctorData.name.split(' ')[1] || mockDoctorData.name}</div>
-            <small>Doctor's Signature</small>
+            <div class="signature-border">
+                <small>Doctor's Signature</small>
+            </div>
         </div>
     </div>
 </body>
