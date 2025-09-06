@@ -927,7 +927,7 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
             {showTranscript && (
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">Transcript</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">Refined Transcript</h3>
                   <button
                     onClick={() => setShowTranscript(false)}
                     className="text-gray-500 hover:text-gray-700"
@@ -942,7 +942,7 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
                     value={transcript}
                     onChange={(e) => setTranscript(e.target.value)}
                     className="w-full h-64 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
-                    placeholder="Your prescription transcript will appear here and can be edited..."
+                    placeholder="Refined and standardized transcript will appear here. You can edit before extraction..."
                   />
                 </div>
                 <div className="mt-4 space-y-3">
