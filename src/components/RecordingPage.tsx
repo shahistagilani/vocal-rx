@@ -272,9 +272,6 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
                 Vocal<span className="text-orange-600">Rx</span>
               </h1>
             </div>
-            <div className="text-sm text-gray-500">
-              Recording Session
-            </div>
           </div>
         </div>
       </div>
