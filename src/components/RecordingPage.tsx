@@ -272,47 +272,57 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
 <head>
     <title>Medical Prescription</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.4; }
-        .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
-        .logo { font-size: 24px; font-weight: bold; color: #ff6b35; }
-        .doctor-info { margin: 10px 0; }
-        .clinic-info { font-size: 12px; color: #666; }
-        .patient-section { display: flex; justify-content: space-between; margin: 20px 0; }
-        .patient-left, .patient-right { width: 48%; }
-        .section { margin: 15px 0; }
-        .section-title { font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #ccc; }
-        .vitals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .medicine-item { margin: 5px 0; padding: 5px; background: #f9f9f9; }
-        .signature-section { margin-top: 40px; text-align: right; }
-        @media print { body { margin: 0; } }
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+        .header { text-align: center; border-bottom: 3px solid #2c5aa0; padding-bottom: 15px; margin-bottom: 25px; }
+        .clinic-logo { width: 80px; height: 80px; margin: 0 auto 15px; background: linear-gradient(135deg, #2c5aa0, #4a90e2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; font-weight: bold; }
+        .clinic-name { font-size: 22px; font-weight: bold; color: #2c5aa0; margin-bottom: 5px; }
+        .clinic-info { font-size: 12px; color: #666; margin-bottom: 10px; }
+        .doctor-info { font-size: 14px; color: #333; border-top: 1px solid #ddd; padding-top: 10px; }
+        .patient-section { background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0; }
+        .patient-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .section { margin: 20px 0; }
+        .section-title { font-weight: bold; color: #2c5aa0; margin-bottom: 8px; border-bottom: 2px solid #2c5aa0; padding-bottom: 3px; }
+        .vitals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f8f9fa; padding: 10px; border-radius: 5px; }
+        .medicine-list { background: #fff; border: 1px solid #ddd; border-radius: 5px; }
+        .medicine-item { padding: 12px; border-bottom: 1px solid #eee; }
+        .medicine-item:last-child { border-bottom: none; }
+        .medicine-name { font-weight: bold; color: #2c5aa0; }
+        .medicine-generic { color: #666; font-style: italic; }
+        .medicine-details { margin-top: 5px; font-size: 14px; }
+        .signature-section { margin-top: 50px; text-align: right; }
+        .signature-box { border-top: 2px solid #2c5aa0; width: 250px; margin-left: auto; padding-top: 10px; }
+        @media print { body { margin: 0; } .no-print { display: none; } }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="logo">VocalRx</div>
-        <div class="doctor-info">
-            <div style="font-size: 18px; font-weight: bold;">${mockDoctorData.name}</div>
-            <div>${mockDoctorData.qualification}</div>
-            <div>Reg. No: ${mockDoctorData.registrationNumber}</div>
-        </div>
+        <div class="clinic-logo">HC</div>
+        <div class="clinic-name">${mockClinicData.name}</div>
         <div class="clinic-info">
-            <div style="font-weight: bold;">${mockClinicData.name}</div>
             <div>${mockClinicData.address}</div>
-            <div>Timings: ${mockClinicData.timings}</div>
+            <div>Phone: ${mockClinicData.phone} | Timings: ${mockClinicData.timings}</div>
             <div>Closed on: ${mockClinicData.closedOn}</div>
-            <div>Phone: ${mockClinicData.phone}</div>
+        </div>
+        <div class="doctor-info">
+            <div style="font-size: 16px; font-weight: bold;">${mockDoctorData.name}</div>
+            <div>${mockDoctorData.qualification}</div>
+            <div>Medical Registration No: ${mockDoctorData.registrationNumber}</div>
         </div>
     </div>
 
     <div class="patient-section">
-        <div class="patient-left">
-            <div><strong>Patient ID:</strong> ${editedData.patient?.id || mockPatientData.id}</div>
-            <div><strong>Patient Name:</strong> ${editedData.patient?.name || mockPatientData.name}</div>
-            <div><strong>Age & Gender:</strong> ${editedData.patient?.age || mockPatientData.age} years, ${editedData.patient?.gender || mockPatientData.gender}</div>
-            <div><strong>Phone:</strong> ${mockPatientData.phone}</div>
-        </div>
-        <div class="patient-right">
-            <div><strong>Date of Prescription:</strong> ${getTodaysDate()}</div>
+        <h3 style="margin-top: 0; color: #2c5aa0;">Patient Information</h3>
+        <div class="patient-grid">
+            <div>
+                <div><strong>Patient ID:</strong> ${editedData.patient?.id || mockPatientData.id}</div>
+                <div><strong>Patient Name:</strong> ${editedData.patient?.name || mockPatientData.name}</div>
+                <div><strong>Age:</strong> ${editedData.patient?.age || mockPatientData.age} years</div>
+                <div><strong>Gender:</strong> ${editedData.patient?.gender || mockPatientData.gender}</div>
+            </div>
+            <div>
+                <div><strong>Phone:</strong> ${mockPatientData.phone}</div>
+                <div><strong>Date:</strong> ${getTodaysDate()}</div>
+            </div>
         </div>
     </div>
 
@@ -352,20 +362,22 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
     </div>
 
     <div class="section">
-        <div class="section-title">Rx - Medicines:</div>
-        <div>
+        <div class="section-title">℞ Prescription</div>
+        <div class="medicine-list">
             ${editedData.medicines?.length > 0 
                 ? editedData.medicines.map((med: any, index: number) => `
                     <div class="medicine-item">
-                        <strong>${index + 1}. ${med.brand_name || 'N/A'}</strong>
-                        ${med.generic_name ? ` (${med.generic_name})` : ''}
-                        | <strong>Dosage:</strong> ${med.dosage || 'N/A'}
-                        | <strong>Frequency:</strong> ${med.frequency || 'N/A'}
-                        | <strong>Duration:</strong> ${med.duration || 'N/A'}
-                        ${med.remarks ? `<br><em>Note: ${med.remarks}</em>` : ''}
+                        <div class="medicine-name">${index + 1}. ${med.brand_name || 'Medicine Name'}</div>
+                        ${med.generic_name ? `<div class="medicine-generic">(${med.generic_name})</div>` : ''}
+                        <div class="medicine-details">
+                            <strong>Dosage:</strong> ${med.dosage || '_____'} | 
+                            <strong>Duration:</strong> ${med.duration || '_____'}
+                            ${med.frequency ? ` | <strong>Frequency:</strong> ${med.frequency}` : ''}
+                        </div>
+                        ${med.remarks ? `<div style="margin-top: 5px; font-style: italic; color: #666;">Note: ${med.remarks}</div>` : ''}
                     </div>
                 `).join('')
-                : '<div>No medicines prescribed</div>'
+                : '<div class="medicine-item">No medicines prescribed</div>'
             }
         </div>
     </div>
@@ -576,15 +588,6 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
                   </div>
                 )}
 
-                {/* Original Transcript */}
-                {editedData.originalTranscript && (
-                  <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Original Transcript</label>
-                    <div className="bg-gray-50 rounded-lg p-3 text-sm text-gray-700 max-h-32 overflow-y-auto">
-                      {editedData.originalTranscript}
-                    </div>
-                  </div>
-                )}
 
                 {/* Clinical Findings */}
                 <div className="mb-6">
