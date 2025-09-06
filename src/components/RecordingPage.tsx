@@ -274,22 +274,25 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
     <meta charset="UTF-8">
     <title>Medical Prescription - ${mockPatientData.name}</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Playfair+Display:wght@400;500;700&display=swap');
-        
         body { 
-            font-family: 'Roboto', Arial, sans-serif; 
+            font-family: Verdana, Arial, sans-serif; 
             margin: 0;
             padding: 0;
             color: #333;
             line-height: 1.6;
             background-color: #fff;
+            font-size: 14px;
         }
         .prescription-container {
             max-width: 8.5in;
             margin: 0 auto;
-            padding: 40px;
+            padding: 30px;
             background: #fff;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .content-wrapper {
+            max-width: 7in;
+            margin: 0 auto;
         }
         .header { 
             text-align: center; 
@@ -368,20 +371,19 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
             line-height: 1.5;
         }
         .patient-info { 
-            display: flex; 
-            justify-content: space-between; 
-            margin: 25px 0; 
-            padding: 20px;
-            background: #f8fafc;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
+            margin: 20px 0;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
         }
-        .patient-left, .patient-right { 
-            flex: 1; 
-            padding: 0 15px;
+        .patient-row {
+            display: flex;
+            margin-bottom: 8px;
         }
-        .patient-right {
-            border-left: 1px solid #e2e8f0;
+        .patient-label {
+            font-weight: 600;
+            color: #2c5aa0;
+            min-width: 120px;
+            display: inline-block;
         }
         .info-line { 
             margin-bottom: 8px;
@@ -395,9 +397,15 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
         .section { 
             margin: 20px 0;
             page-break-inside: avoid;
+            text-align: left;
         }
         .section-title { 
-            font-family: 'Playfair Display', serif;
+            color: #2c5aa0;
+            font-weight: 600;
+            border-bottom: 2px solid #2c5aa0;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+            font-size: 16px;
             font-weight: 600; 
             margin-bottom: 10px; 
             color: #2c5aa0;
@@ -604,37 +612,55 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
 </head>
 <body>
     <div class="prescription-container">
-        <div class="header">
-            <div class="logo">HC+</div>
-            <div class="tagline">Healing begins with a conversation. Turning voices into care.</div>
-            <div class="header-content">
-                <div class="doctor-section">
-                    <div class="doctor-name">${mockDoctorData.name}</div>
-                    <div class="doctor-qualification">${mockDoctorData.qualification}</div>
-                    <div class="doctor-registration">License: ${mockDoctorData.registrationNumber}</div>
-                </div>
-                <div class="clinic-section">
-                    <div class="clinic-name">${mockClinicData.name}</div>
-                    <div class="clinic-address">${mockClinicData.address}</div>
-                    <div class="clinic-timings">Hours: ${mockClinicData.timings}</div>
-                    <div class="clinic-phone">Contact: ${mockClinicData.phone}</div>
+        <div class="content-wrapper">
+            <div class="header">
+                <div class="logo">HC+</div>
+                <div class="tagline">Healing begins with a conversation. Turning voices into care.</div>
+                <div class="header-content">
+                    <div class="doctor-section">
+                        <div class="doctor-name">${mockDoctorData.name}</div>
+                        <div class="doctor-qualification">${mockDoctorData.qualification}</div>
+                        <div class="doctor-registration">License: ${mockDoctorData.registrationNumber}</div>
+                    </div>
+                    <div class="clinic-section">
+                        <div class="clinic-name">${mockClinicData.name}</div>
+                        <div class="clinic-address">${mockClinicData.address}</div>
+                        <div class="clinic-timings">Hours: ${mockClinicData.timings}</div>
+                        <div class="clinic-phone">Contact: ${mockClinicData.phone}</div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="patient-info">
-            <div class="patient-left">
-                <div class="info-line"><strong>Patient ID:</strong> ${editedData.patient?.id || mockPatientData.id}</div>
-                <div class="info-line"><strong>Name:</strong> ${editedData.patient?.name || mockPatientData.name}</div>
-                <div class="info-line"><strong>Age/Gender:</strong> ${editedData.patient?.age || mockPatientData.age} years, ${editedData.patient?.gender || mockPatientData.gender}</div>
-                <div class="info-line"><strong>Phone:</strong> ${mockPatientData.phone}</div>
+            <div class="patient-info">
+                <div class="patient-row">
+                    <span class="patient-label">Patient ID:</span>
+                    <span>${editedData.patient?.id || mockPatientData.id}</span>
+                </div>
+                <div class="patient-row">
+                    <span class="patient-label">Name:</span>
+                    <span>${editedData.patient?.name || mockPatientData.name}</span>
+                </div>
+                <div class="patient-row">
+                    <span class="patient-label">Age/Gender:</span>
+                    <span>${editedData.patient?.age || mockPatientData.age} years, ${editedData.patient?.gender || mockPatientData.gender}</span>
+                </div>
+                <div class="patient-row">
+                    <span class="patient-label">Phone:</span>
+                    <span>${mockPatientData.phone}</span>
+                </div>
+                <div class="patient-row">
+                    <span class="patient-label">Date:</span>
+                    <span>${getTodaysDate()}</span>
+                </div>
+                <div class="patient-row">
+                    <span class="patient-label">Time:</span>
+                    <span>${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
+                </div>
+                <div class="patient-row">
+                    <span class="patient-label">Visit #:</span>
+                    <span>${Math.floor(Math.random() * 1000).toString().padStart(4, '0')}</span>
+                </div>
             </div>
-            <div class="patient-right">
-                <div class="info-line"><strong>Date:</strong> ${getTodaysDate()}</div>
-                <div class="info-line"><strong>Time:</strong> ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</div>
-                <div class="info-line"><strong>Visit:</strong> #${Math.floor(Math.random() * 1000).toString().padStart(4, '0')}</div>
-            </div>
-        </div>
 
         <div class="section">
             <div class="section-title">Vital Signs</div>
@@ -745,42 +771,37 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
         </div>
         ` : ''}
 
-        <div class="signature">
-            <div class="signature-line">
-                <div class="handwritten-signature">${mockDoctorData.signature}</div>
-                <div class="signature-border"></div>
-                <div>${mockDoctorData.name}, ${mockDoctorData.qualification.split(',')[0]}</div>
-                <div>License: ${mockDoctorData.registrationNumber}</div>
-                <div>${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
+        <div class="section">
+            <div class="section-title">Follow-up Instructions</div>
+            <p>Follow-up on: <strong>${editedData.followup_date || 'As needed'}</strong></p>
+        </div>
+
+        <div class="signature-section" style="margin-top: 60px; padding-top: 20px; border-top: 1px solid #eee;">
+            <div style="text-align: right;">
+                <div style="display: inline-block; text-align: center; min-width: 250px;">
+                    <div style="font-family: 'Brush Script MT', cursive; font-size: 24px; color: #2c5aa0; padding-bottom: 5px;">
+                        ${mockDoctorData.signature || `Dr. ${mockDoctorData.name.split(' ')[1] || mockDoctorData.name}`}
+                    </div>
+                    <div style="border-top: 1px solid #333; padding-top: 5px; margin-top: 5px;">
+                        <div style="font-size: 14px; font-weight: 600; color: #2c5aa0;">
+                            ${mockDoctorData.name}, ${mockDoctorData.qualification.split(',')[0]}
+                        </div>
+                        <div style="font-size: 12px; color: #666; margin-top: 2px;">
+                            License: ${mockDoctorData.registrationNumber}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="footer">
-            <p>This is an electronically generated prescription. No signature is required for validity.</p>
+        <div class="footer" style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #777; text-align: center;">
+            <p>This is a computer-generated prescription. No physical signature is required.</p>
+            <p>${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
             <p>&copy; ${new Date().getFullYear()} ${mockClinicData.name}. All rights reserved.</p>
         </div>
     </div>
-
-    <div class="section">
-        <div class="section-title">Follow-up Date:</div>
-        <div>${editedData.followup_date || 'As needed'}</div>
-    </div>
-
-    <div class="signature">
-        <div class="signature-line">
-            <div class="handwritten-signature">Dr. ${mockDoctorData.name.split(' ')[1] || mockDoctorData.name}</div>
-            <div class="signature-border">
-                <small>Doctor's Signature</small>
-            </div>
-        </div>
-    </div>
-    
-    <div class="footer">
-        <p>This is a computer-generated prescription. No physical signature is required.</p>
-    </div>
-</div>
 </body>
-</html>`
+</html>
 
     // Navigate to the prescription preview page
     navigate('/prescription-preview', { state: { prescriptionHtml: prescriptionTemplate } });
