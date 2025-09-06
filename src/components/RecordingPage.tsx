@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import { RecordingInterface } from './RecordingInterface'
 import { useTimer } from '../hooks/useTimer'
-import PatientContextPanel from './PatientContextPanel'
+import PatientInfoSidebar from './PatientInfoSidebar'
 
 interface RecordingPageProps {
   onBackToHome: () => void
@@ -15,7 +15,6 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
   const [hasExtracted, setHasExtracted] = useState(false)
   const [isExtracting, setIsExtracting] = useState(false)
   const [showTranscript, setShowTranscript] = useState(false)
-  const [showPatientContext, setShowPatientContext] = useState(false)
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioChunksRef = useRef<Blob[]>([])
@@ -222,7 +221,7 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
     setEditedData((prev: any) => ({
       ...prev,
       medicines: [
-        ...prev.medicines,
+        ...(prev.medicines || []),
         {
           brand_name: '',
           generic_name: '',
@@ -278,37 +277,28 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Column - Recording Interface */}
-          <div className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column - Patient Information */}
+          <div className="lg:col-span-1">
+            <PatientInfoSidebar patientData={mockPatientData} />
+          </div>
+
+          {/* Right Column - Recording Interface */}
+          <div className="lg:col-span-2 space-y-6">
             {/* Recording Controls */}
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Hello Doctor!</h2>
               
               {!isRecording && !isProcessing && !showTranscript && (
-                <div className="space-y-4">
-                  {/* View Patient Context Button */}
-                  <button
-                    onClick={() => setShowPatientContext(true)}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center"
-                  >
-                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    View Patient Information
-                  </button>
-
-                  {/* Start Recording Button */}
-                  <button
-                    onClick={startRecording}
-                    className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-4 px-6 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center"
-                  >
-                    <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                    </svg>
-                    Start Recording the Prescription
-                  </button>
-                </div>
+                <button
+                  onClick={startRecording}
+                  className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-4 px-6 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center"
+                >
+                  <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                  </svg>
+                  Start Recording the Prescription
+                </button>
               )}
 
               {isRecording && (
@@ -324,56 +314,65 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
               {isProcessing && (
                 <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
-                  <p className="text-gray-600">Processing audio...</p>
+                  <p className="text-gray-600">Processing your recording...</p>
                 </div>
               )}
             </div>
 
-            {/* Transcript */}
+            {/* Transcript Display */}
             {showTranscript && (
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-lg font-semibold text-gray-900">Transcript</h2>
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={restartRecording}
-                      className="px-4 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      Record Again
-                    </button>
-                    <button
-                      onClick={extractPrescription}
-                      disabled={isExtracting}
-                      className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors disabled:opacity-50"
-                    >
-                      {isExtracting ? 'Extracting...' : 'Extract Prescription'}
-                    </button>
-                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900">Transcript</h3>
+                  <button
+                    onClick={() => setShowTranscript(false)}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto">
-                  <p className="text-gray-700 whitespace-pre-wrap">{transcript}</p>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <textarea
+                    value={transcript}
+                    onChange={(e) => setTranscript(e.target.value)}
+                    className="w-full h-64 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
+                    placeholder="Your prescription transcript will appear here and can be edited..."
+                  />
+                </div>
+                <div className="mt-4 flex space-x-3">
+                  <button
+                    onClick={extractPrescription}
+                    disabled={isExtracting}
+                    className="flex-1 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded-lg transition-colors flex items-center justify-center"
+                  >
+                    {isExtracting ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Extracting...
+                      </>
+                    ) : (
+                      'Extract Prescription Data'
+                    )}
+                  </button>
+                  <button
+                    onClick={restartRecording}
+                    className="flex-1 border border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold py-2 px-4 rounded-lg transition-colors"
+                  >
+                    Record Again
+                  </button>
                 </div>
               </div>
             )}
-          </div>
 
-          {/* Right Column - Prescription Form */}
-          <div className="space-y-6">
+            {/* Prescription Data */}
             {hasExtracted && editedData && (
               <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-6">Extracted Prescription</h2>
-                
-                {/* Chief Complaints */}
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Chief Complaints</label>
-                  <textarea
-                    value={editedData.chief_complaints || ''}
-                    onChange={(e) => handleInputChange('chief_complaints', e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    rows={3}
-                    placeholder="Patient's main complaints..."
-                  />
-                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-6">Prescription Data</h3>
 
                 {/* Clinical Findings */}
                 <div className="mb-6">
@@ -528,13 +527,6 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
           </div>
         </div>
       </div>
-
-      {/* Patient Context Panel */}
-      <PatientContextPanel
-        isOpen={showPatientContext}
-        onClose={() => setShowPatientContext(false)}
-        patientData={mockPatientData}
-      />
     </div>
   )
 }
