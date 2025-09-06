@@ -162,7 +162,7 @@ ${EXTRACTION_PROMPT.replace('{{transcript}}', transcript)}`
   }
 }
 
-module.exports = async function handler(
+export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
