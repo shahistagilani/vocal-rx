@@ -10,7 +10,6 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
   const [isRecording, setIsRecording] = useState(false)
   const [transcript, setTranscript] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
-  const [prescriptionData, setPrescriptionData] = useState<any>(null)
   const [editedData, setEditedData] = useState<any>(null)
   const [hasExtracted, setHasExtracted] = useState(false)
   const [isExtracting, setIsExtracting] = useState(false)
@@ -22,33 +21,6 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
   const analyserRef = useRef<AnalyserNode | null>(null)
   const { time, start: startTimer, stop: stopTimer, reset: resetTimer } = useTimer()
 
-  // Static prefilled data (Parts 1-3: Doctor, Clinic, Patient, Vitals)
-  const staticData = {
-    // Part 1: Doctor & Clinic Details (static per doctor)
-    clinic_name: "Heart Care Clinic",
-    clinic_tagline: "Comprehensive Cardiac Care",
-    doctor_name: "Dr. Sarah Johnson",
-    doctor_qualification: "MBBS, MD (Cardiology)",
-    doctor_reg_no: "MH12345",
-    clinic_address: "123 Medical Street, Mumbai 400001",
-    clinic_timings: "9 AM - 6 PM, Closed on Sundays",
-    clinic_phone: "+91-9876543210",
-    
-    // Part 2: Patient Profile (from appointment system)
-    patient_id: "P001234",
-    patient_name: "John Doe",
-    patient_age: "45",
-    patient_gender: "Male",
-    patient_phone: "+91-9876543211",
-    prescription_date: new Date().toLocaleDateString('en-IN'),
-    
-    // Part 3: Other Department Contributions (vitals, investigations)
-    vitals_temp: "98.6°F",
-    vitals_bp: "140/90 mmHg",
-    vitals_height: "5'8\"",
-    vitals_weight: "70kg",
-    prescribed_investigations: ["ECG", "Cardiac enzymes", "Chest X-ray"]
-  }
 
   const startRecording = async () => {
     try {
@@ -109,7 +81,6 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
     
     // Reset all states
     setTranscript('')
-    setPrescriptionData(null)
     setEditedData(null)
     setHasExtracted(false)
     setIsExtracting(false)
@@ -176,7 +147,6 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
       }
 
       const extractedData = await response.json()
-      setPrescriptionData(extractedData)
       setEditedData({ ...extractedData })
       setHasExtracted(true)
     } catch (error) {
