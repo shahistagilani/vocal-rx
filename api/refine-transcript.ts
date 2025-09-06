@@ -1,21 +1,30 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  console.log('Refine transcript API called with method:', req.method)
+  
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
   try {
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY
+    console.log('GEMINI_API_KEY exists:', !!GEMINI_API_KEY)
+    
     if (!GEMINI_API_KEY) {
+      console.error('Gemini API key not found in environment variables')
       return res.status(500).json({ error: 'Gemini API key not configured' })
     }
 
+    console.log('Request body:', JSON.stringify(req.body).substring(0, 200))
     const { transcript } = req.body as { transcript?: string }
 
     if (!transcript || !transcript.trim()) {
+      console.error('No transcript provided in request body')
       return res.status(400).json({ error: 'Transcript is required' })
     }
+
+    console.log('Transcript length:', transcript.length)
 
     // Prompt to refine and standardize medical content
     const systemInstruction = `
@@ -58,6 +67,7 @@ You are a medical scribe assistant. Given a raw dictation transcript from a doct
       },
     }
 
+    console.log('Making request to Gemini API...')
     const response = await fetch(`${url}?key=${GEMINI_API_KEY}`, {
       method: 'POST',
       headers: {
@@ -66,13 +76,16 @@ You are a medical scribe assistant. Given a raw dictation transcript from a doct
       body: JSON.stringify(body),
     })
 
+    console.log('Gemini API response status:', response.status)
+    
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('Gemini API error:', errorText)
-      return res.status(500).json({ error: 'Refinement failed' })
+      console.error('Gemini API error response:', errorText)
+      return res.status(500).json({ error: 'Refinement failed', details: errorText })
     }
 
     const data = await response.json()
+    console.log('Gemini API response structure:', JSON.stringify(data, null, 2))
 
     // Extract text from Gemini response with fallback
     let refinedText: string = ''
@@ -84,14 +97,18 @@ You are a medical scribe assistant. Given a raw dictation transcript from a doct
       refinedText = data.candidates[0].content.parts[0].text
     }
 
+    console.log('Extracted refined text length:', refinedText.length)
+
     if (!refinedText) {
+      console.error('No refined text could be extracted from Gemini response')
       return res.status(500).json({ error: 'No refined text generated' })
     }
 
+    console.log('Successfully refined transcript')
     return res.status(200).json({ refined: refinedText })
 
   } catch (error) {
-    console.error('Refinement error:', error)
-    return res.status(500).json({ error: 'Internal server error' })
+    console.error('Refinement error details:', error)
+    return res.status(500).json({ error: 'Internal server error', details: error.message })
   }
 }
