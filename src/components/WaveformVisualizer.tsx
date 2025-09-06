@@ -10,9 +10,6 @@ export const WaveformVisualizer = ({
   analyser
 }: WaveformVisualizerProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const audioContextRef = useRef<AudioContext | null>(null)
-  const analyserRef = useRef<AnalyserNode | null>(null)
-  const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null)
   const animationRef = useRef<number | null>(null)
 
   // Setup live audio visualization
@@ -23,15 +20,6 @@ export const WaveformVisualizer = ({
         cancelAnimationFrame(animationRef.current)
         animationRef.current = null
       }
-      if (sourceRef.current) {
-        sourceRef.current.disconnect()
-        sourceRef.current = null
-      }
-      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
-        audioContextRef.current.close()
-        audioContextRef.current = null
-      }
-      analyserRef.current = null
       return
     }
 
@@ -49,15 +37,12 @@ export const WaveformVisualizer = ({
 
         ctx.scale(window.devicePixelRatio, window.devicePixelRatio)
 
-        // Use the provided analyser
-        analyserRef.current = analyser
-
         const bufferLength = analyser.frequencyBinCount
         const dataArray = new Uint8Array(bufferLength)
 
         // Create a function to draw the waveform bars
         const drawWaveform = () => {
-          if (!analyserRef.current || !canvasRef.current) return
+          if (!analyser || !canvasRef.current) return
 
           const canvas = canvasRef.current
           const ctx = canvas.getContext('2d')
@@ -117,14 +102,8 @@ export const WaveformVisualizer = ({
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current)
       }
-      if (sourceRef.current) {
-        sourceRef.current.disconnect()
-      }
-      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
-        audioContextRef.current.close()
-      }
     }
-  }, [isRecording, mediaStream])
+  }, [isRecording, analyser])
 
   return (
     <div className="w-full">
