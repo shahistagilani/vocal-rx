@@ -186,6 +186,9 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
       if (!transcribedText) {
         throw new Error('No transcript received')
       }
+      // Build combined transcript (existing + new) for a cohesive refinement
+      const combinedForRefinement = (transcript ? transcript + '\n\n' : '') + transcribedText
+
       // Refine transcript via Gemini endpoint to standardize and clean up medical content
       let refinedText = ''
       try {
@@ -194,7 +197,7 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ transcript: transcribedText }),
+          body: JSON.stringify({ transcript: combinedForRefinement }),
         })
         if (refineResp.ok) {
           const refineData = await refineResp.json()
@@ -206,8 +209,8 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
         console.error('Error refining transcript:', e)
       }
 
-      const finalText = refinedText || transcribedText
-      setTranscript(prev => prev ? prev + '\n\n' + finalText : finalText)
+      const finalText = refinedText || combinedForRefinement
+      setTranscript(finalText)
       setShowTranscript(true)
       setIsProcessing(false)
     } catch (error) {
