@@ -22,48 +22,55 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
   const analyserRef = useRef<AnalyserNode | null>(null)
   const { time, start: startTimer, stop: stopTimer, reset: resetTimer } = useTimer()
 
-  // Mock patient data for demonstration
+  // Mock patient data
   const mockPatientData = {
-    id: "P001234",
-    name: "John Doe",
+    id: 'PAT-2024-001',
+    name: 'John Smith',
     age: 45,
-    gender: "Male",
-    photo: "/patient-photo.jpg",
-    conditions: ["Hypertension", "Type 2 Diabetes", "Hyperlipidemia"],
+    gender: 'Male',
+    phone: '+1-555-0123',
+    photo: '/api/placeholder/patient-photo',
+    conditions: ['Hypertension', 'Type 2 Diabetes'],
     vitals: {
-      bloodPressure: "140/90 mmHg",
-      temperature: "98.6°F",
-      weight: "75 kg",
-      height: "5'8\"",
-      heartRate: "78 bpm",
-      lastUpdated: "Today 2:30 PM"
+      bloodPressure: '140/90 mmHg',
+      temperature: '98.6°F',
+      weight: '180 lbs',
+      height: '5\'10"',
+      heartRate: '72 bpm',
+      lastUpdated: '2024-12-06'
     },
     labResults: [
-      {
-        test: "HbA1c",
-        result: "7.2%",
-        date: "Dec 1, 2024",
-        status: "abnormal" as const
-      },
-      {
-        test: "Total Cholesterol",
-        result: "220 mg/dL",
-        date: "Dec 1, 2024",
-        status: "abnormal" as const
-      },
-      {
-        test: "CBC",
-        result: "Normal",
-        date: "Nov 28, 2024",
-        status: "normal" as const
-      },
-      {
-        test: "Chest X-ray",
-        result: "Clear lungs",
-        date: "Nov 25, 2024",
-        status: "normal" as const
-      }
+      { test: 'HbA1c', result: '7.2%', date: '2024-12-01', status: 'abnormal' as const },
+      { test: 'Fasting Glucose', result: '145 mg/dL', date: '2024-12-01', status: 'abnormal' as const },
+      { test: 'Total Cholesterol', result: '195 mg/dL', date: '2024-12-01', status: 'normal' as const },
+      { test: 'HDL', result: '45 mg/dL', date: '2024-12-01', status: 'normal' as const },
+      { test: 'LDL', result: '120 mg/dL', date: '2024-12-01', status: 'normal' as const }
     ]
+  }
+
+  // Mock doctor and clinic data
+  const mockDoctorData = {
+    name: 'Dr. Sarah Johnson',
+    qualification: 'MBBS, MD (Internal Medicine)',
+    registrationNumber: 'MCI-12345-2018',
+    signature: 'Dr. Sarah Johnson'
+  }
+
+  const mockClinicData = {
+    name: 'HealthCare Plus Clinic',
+    address: '123 Medical Center Drive, Suite 200, Healthcare City, HC 12345',
+    phone: '+1-555-HEALTH (432584)',
+    timings: 'Mon-Fri: 9:00 AM - 6:00 PM, Sat: 9:00 AM - 2:00 PM',
+    closedOn: 'Sundays and Public Holidays'
+  }
+
+  // Get today's date
+  const getTodaysDate = () => {
+    return new Date().toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
   }
 
   const startRecording = async () => {
@@ -255,6 +262,153 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
       ...prev,
       medicines: prev.medicines.filter((_: any, i: number) => i !== index)
     }))
+  }
+
+  const generatePrescription = () => {
+    // Create comprehensive prescription template
+    const prescriptionTemplate = `
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Medical Prescription</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.4; }
+        .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
+        .logo { font-size: 24px; font-weight: bold; color: #ff6b35; }
+        .doctor-info { margin: 10px 0; }
+        .clinic-info { font-size: 12px; color: #666; }
+        .patient-section { display: flex; justify-content: space-between; margin: 20px 0; }
+        .patient-left, .patient-right { width: 48%; }
+        .section { margin: 15px 0; }
+        .section-title { font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #ccc; }
+        .vitals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .medicine-item { margin: 5px 0; padding: 5px; background: #f9f9f9; }
+        .signature-section { margin-top: 40px; text-align: right; }
+        @media print { body { margin: 0; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">VocalRx</div>
+        <div class="doctor-info">
+            <div style="font-size: 18px; font-weight: bold;">${mockDoctorData.name}</div>
+            <div>${mockDoctorData.qualification}</div>
+            <div>Reg. No: ${mockDoctorData.registrationNumber}</div>
+        </div>
+        <div class="clinic-info">
+            <div style="font-weight: bold;">${mockClinicData.name}</div>
+            <div>${mockClinicData.address}</div>
+            <div>Timings: ${mockClinicData.timings}</div>
+            <div>Closed on: ${mockClinicData.closedOn}</div>
+            <div>Phone: ${mockClinicData.phone}</div>
+        </div>
+    </div>
+
+    <div class="patient-section">
+        <div class="patient-left">
+            <div><strong>Patient ID:</strong> ${editedData.patient?.id || mockPatientData.id}</div>
+            <div><strong>Patient Name:</strong> ${editedData.patient?.name || mockPatientData.name}</div>
+            <div><strong>Age & Gender:</strong> ${editedData.patient?.age || mockPatientData.age} years, ${editedData.patient?.gender || mockPatientData.gender}</div>
+            <div><strong>Phone:</strong> ${mockPatientData.phone}</div>
+        </div>
+        <div class="patient-right">
+            <div><strong>Date of Prescription:</strong> ${getTodaysDate()}</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Vitals:</div>
+        <div class="vitals-grid">
+            <div><strong>Body Temperature:</strong> ${mockPatientData.vitals.temperature}</div>
+            <div><strong>Blood Pressure:</strong> ${mockPatientData.vitals.bloodPressure}</div>
+            <div><strong>Height:</strong> ${mockPatientData.vitals.height}</div>
+            <div><strong>Weight:</strong> ${mockPatientData.vitals.weight}</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Chief Complaints:</div>
+        <div>${editedData.chief_complaints || 'Not specified'}</div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Clinical Findings:</div>
+        <div>${editedData.clinical_findings || 'Not specified'}</div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Prescribed Investigations:</div>
+        <div>
+            ${editedData.prescribed_investigations?.length > 0 
+                ? editedData.prescribed_investigations.map((test: string) => `• ${test}`).join('<br>')
+                : 'None prescribed'
+            }
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Diagnosis:</div>
+        <div>${editedData.diagnosis || 'Not specified'}</div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Rx - Medicines:</div>
+        <div>
+            ${editedData.medicines?.length > 0 
+                ? editedData.medicines.map((med: any, index: number) => `
+                    <div class="medicine-item">
+                        <strong>${index + 1}. ${med.brand_name || 'N/A'}</strong>
+                        ${med.generic_name ? ` (${med.generic_name})` : ''}
+                        | <strong>Dosage:</strong> ${med.dosage || 'N/A'}
+                        | <strong>Frequency:</strong> ${med.frequency || 'N/A'}
+                        | <strong>Duration:</strong> ${med.duration || 'N/A'}
+                        ${med.remarks ? `<br><em>Note: ${med.remarks}</em>` : ''}
+                    </div>
+                `).join('')
+                : '<div>No medicines prescribed</div>'
+            }
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Advice:</div>
+        <div>
+            ${editedData.advice?.diet ? `<div><strong>Diet:</strong> ${editedData.advice.diet}</div>` : ''}
+            ${editedData.advice?.exercise ? `<div><strong>Exercise:</strong> ${editedData.advice.exercise}</div>` : ''}
+            ${editedData.advice?.sleep ? `<div><strong>Sleep:</strong> ${editedData.advice.sleep}</div>` : ''}
+            ${editedData.advice?.other ? `<div><strong>Other:</strong> ${editedData.advice.other}</div>` : ''}
+            ${!editedData.advice?.diet && !editedData.advice?.exercise && !editedData.advice?.sleep && !editedData.advice?.other ? 'No specific advice given' : ''}
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Follow-up Date:</div>
+        <div>${editedData.followup_date || 'As needed'}</div>
+    </div>
+
+    <div class="signature-section">
+        <div style="margin-top: 50px; border-top: 1px solid #333; width: 200px; margin-left: auto;">
+            <div style="text-align: center; margin-top: 10px;">
+                <strong>${mockDoctorData.signature}</strong><br>
+                <small>Digital Signature</small>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+    `
+
+    // Open prescription in new window for printing
+    const printWindow = window.open('', '_blank')
+    if (printWindow) {
+      printWindow.document.write(prescriptionTemplate)
+      printWindow.document.close()
+      printWindow.focus()
+      // Auto print after a short delay
+      setTimeout(() => {
+        printWindow.print()
+      }, 500)
+    }
   }
 
   const handleAdviceChange = (field: string, value: string) => {
@@ -573,8 +727,14 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
 
                 {/* Action Buttons */}
                 <div className="flex space-x-4">
-                  <button className="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
-                    Generate Prescription
+                  <button 
+                    onClick={generatePrescription}
+                    className="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center"
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    E-Sign & Approve
                   </button>
                   <button className="flex-1 border border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold py-3 px-6 rounded-lg transition-colors">
                     Save Draft
