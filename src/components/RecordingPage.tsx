@@ -337,41 +337,43 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
 
     <div class="section">
         <div class="section-title">Chief Complaints:</div>
-        <div>${editedData.chief_complaints || 'Not specified'}</div>
+        <div>${editedData.chief_complaints || ''}</div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Notes:</div>
+        <div>${editedData.clinical_findings || ''}</div>
     </div>
 
     <div class="section">
         <div class="section-title">Clinical Findings:</div>
-        <div>${editedData.clinical_findings || 'Not specified'}</div>
+        <div>${editedData.clinical_findings || ''}</div>
     </div>
 
     <div class="section">
-        <div class="section-title">Prescribed Investigations:</div>
+        <div class="section-title">Prescribed Investigation:</div>
         <div>
             ${editedData.prescribed_investigations?.length > 0 
                 ? editedData.prescribed_investigations.map((test: string) => `• ${test}`).join('<br>')
-                : 'None prescribed'
+                : ''
             }
         </div>
     </div>
 
     <div class="section">
         <div class="section-title">Diagnosis:</div>
-        <div>${editedData.diagnosis || 'Not specified'}</div>
+        <div>${editedData.diagnosis || ''}</div>
     </div>
 
     <div class="section">
-        <div class="section-title">℞ Prescription</div>
+        <div class="section-title">℞ Medicine:</div>
         <div class="medicine-list">
             ${editedData.medicines?.length > 0 
                 ? editedData.medicines.map((med: any, index: number) => `
                     <div class="medicine-item">
-                        <div class="medicine-name">${index + 1}. ${med.brand_name || 'Medicine Name'}</div>
-                        ${med.generic_name ? `<div class="medicine-generic">(${med.generic_name})</div>` : ''}
+                        <div class="medicine-name">${index + 1}. ${med.brand_name || 'Medicine Name'} ${med.generic_name ? `(${med.generic_name})` : ''}</div>
                         <div class="medicine-details">
-                            <strong>Dosage:</strong> ${med.dosage || '_____'} | 
-                            <strong>Duration:</strong> ${med.duration || '_____'}
-                            ${med.frequency ? ` | <strong>Frequency:</strong> ${med.frequency}` : ''}
+                            ${med.dosage || '_____'} | ${med.duration || '_____'}
                         </div>
                         ${med.remarks ? `<div style="margin-top: 5px; font-style: italic; color: #666;">Note: ${med.remarks}</div>` : ''}
                     </div>
