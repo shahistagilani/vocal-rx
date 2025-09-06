@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import { RecordingInterface } from './RecordingInterface'
 import { useTimer } from '../hooks/useTimer'
+import PatientContextPanel from './PatientContextPanel'
 
 interface RecordingPageProps {
   onBackToHome: () => void
@@ -14,6 +15,7 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
   const [hasExtracted, setHasExtracted] = useState(false)
   const [isExtracting, setIsExtracting] = useState(false)
   const [showTranscript, setShowTranscript] = useState(false)
+  const [showPatientContext, setShowPatientContext] = useState(false)
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioChunksRef = useRef<Blob[]>([])
@@ -21,6 +23,49 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
   const analyserRef = useRef<AnalyserNode | null>(null)
   const { time, start: startTimer, stop: stopTimer, reset: resetTimer } = useTimer()
 
+  // Mock patient data for demonstration
+  const mockPatientData = {
+    id: "P001234",
+    name: "John Doe",
+    age: 45,
+    gender: "Male",
+    photo: "/patient-photo.jpg",
+    conditions: ["Hypertension", "Type 2 Diabetes", "Hyperlipidemia"],
+    vitals: {
+      bloodPressure: "140/90 mmHg",
+      temperature: "98.6°F",
+      weight: "75 kg",
+      height: "5'8\"",
+      heartRate: "78 bpm",
+      lastUpdated: "Today 2:30 PM"
+    },
+    labResults: [
+      {
+        test: "HbA1c",
+        result: "7.2%",
+        date: "Dec 1, 2024",
+        status: "abnormal" as const
+      },
+      {
+        test: "Total Cholesterol",
+        result: "220 mg/dL",
+        date: "Dec 1, 2024",
+        status: "abnormal" as const
+      },
+      {
+        test: "CBC",
+        result: "Normal",
+        date: "Nov 28, 2024",
+        status: "normal" as const
+      },
+      {
+        test: "Chest X-ray",
+        result: "Clear lungs",
+        date: "Nov 25, 2024",
+        status: "normal" as const
+      }
+    ]
+  }
 
   const startRecording = async () => {
     try {
@@ -244,15 +289,29 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Voice Recording</h2>
               
               {!isRecording && !isProcessing && !showTranscript && (
-                <button
-                  onClick={startRecording}
-                  className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-4 px-6 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center"
-                >
-                  <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                  </svg>
-                  Start Recording
-                </button>
+                <div className="space-y-4">
+                  {/* View Patient Context Button */}
+                  <button
+                    onClick={() => setShowPatientContext(true)}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center"
+                  >
+                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    View Patient Context
+                  </button>
+
+                  {/* Start Recording Button */}
+                  <button
+                    onClick={startRecording}
+                    className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-4 px-6 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center"
+                  >
+                    <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                    </svg>
+                    Start Recording
+                  </button>
+                </div>
               )}
 
               {isRecording && (
@@ -472,6 +531,13 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
           </div>
         </div>
       </div>
+
+      {/* Patient Context Panel */}
+      <PatientContextPanel
+        isOpen={showPatientContext}
+        onClose={() => setShowPatientContext(false)}
+        patientData={mockPatientData}
+      />
     </div>
   )
 }
