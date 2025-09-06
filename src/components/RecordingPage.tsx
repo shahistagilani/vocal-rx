@@ -530,7 +530,7 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
                         Extracting...
                       </>
                     ) : (
-                      'Extract Prescription Data'
+                      'Extract Prescription'
                     )}
                   </button>
                   <button
@@ -617,16 +617,44 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
                   />
                 </div>
 
-                {/* Prescribed Investigation */}
+                {/* Prescribed Investigations */}
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Prescribed Investigation</label>
-                  <textarea
-                    value={editedData.prescribed_investigation || ''}
-                    onChange={(e) => handleInputChange('prescribed_investigation', e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    rows={3}
-                    placeholder="Lab tests, imaging, or other investigations..."
-                  />
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Prescribed Investigations</label>
+                  <div className="space-y-2">
+                    {editedData.prescribed_investigations?.map((investigation: string, index: number) => (
+                      <div key={index} className="flex items-center space-x-2">
+                        <input
+                          type="text"
+                          value={investigation}
+                          onChange={(e) => {
+                            const newInvestigations = [...(editedData.prescribed_investigations || [])]
+                            newInvestigations[index] = e.target.value
+                            handleInputChange('prescribed_investigations', newInvestigations)
+                          }}
+                          className="flex-1 p-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
+                          placeholder="Investigation name (e.g., CBC, Chest X-ray)"
+                        />
+                        <button
+                          onClick={() => {
+                            const newInvestigations = editedData.prescribed_investigations?.filter((_: any, i: number) => i !== index) || []
+                            handleInputChange('prescribed_investigations', newInvestigations)
+                          }}
+                          className="text-red-500 hover:text-red-700 text-sm px-2"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    )) || []}
+                    <button
+                      onClick={() => {
+                        const newInvestigations = [...(editedData.prescribed_investigations || []), '']
+                        handleInputChange('prescribed_investigations', newInvestigations)
+                      }}
+                      className="px-3 py-1 bg-orange-100 text-orange-700 rounded-lg hover:bg-orange-200 transition-colors text-sm"
+                    >
+                      + Add Investigation
+                    </button>
+                  </div>
                 </div>
 
                 {/* Diagnosis */}
@@ -682,24 +710,34 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
                         />
                       </div>
                       
-                      <div className="grid grid-cols-3 gap-3 mb-3">
+                      <div className="grid grid-cols-2 gap-3 mb-3">
                         <input
                           type="text"
-                          placeholder="Dosage"
+                          placeholder="Dosage (e.g., 500mg, 10ml)"
                           value={medicine.dosage || ''}
                           onChange={(e) => handleMedicineChange(index, 'dosage', e.target.value)}
                           className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
                         />
                         <input
                           type="text"
-                          placeholder="Frequency"
+                          placeholder="Frequency (e.g., OD, BD, TDS)"
                           value={medicine.frequency || ''}
                           onChange={(e) => handleMedicineChange(index, 'frequency', e.target.value)}
                           className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
                         />
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-3 mb-3">
                         <input
                           type="text"
-                          placeholder="Duration"
+                          placeholder="Route (e.g., Oral, IV, IM, Topical)"
+                          value={medicine.route || ''}
+                          onChange={(e) => handleMedicineChange(index, 'route', e.target.value)}
+                          className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Duration (e.g., 7 days, 2 weeks)"
                           value={medicine.duration || ''}
                           onChange={(e) => handleMedicineChange(index, 'duration', e.target.value)}
                           className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
