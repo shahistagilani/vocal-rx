@@ -92,7 +92,10 @@ export const WaveformVisualizer = ({
           for (let i = 0; i < barCount; i++) {
             // Sample data points across the frequency spectrum
             const dataIndex = Math.floor((i / barCount) * bufferLength)
-            const barHeight = (dataArray[dataIndex] / 255) * height * 0.8
+            let barHeight = (dataArray[dataIndex] / 255) * height * 0.8
+            
+            // Ensure minimum bar height for visibility
+            barHeight = Math.max(barHeight, 2)
             
             const x = i * (barWidth + barSpacing)
             const y = height - barHeight
@@ -138,10 +141,10 @@ export const WaveformVisualizer = ({
     <div className="w-full">
       <canvas 
         ref={canvasRef}
-        className={`w-full bg-slate-50 rounded-lg transition-opacity duration-300 ${
+        className={`w-full rounded-lg transition-opacity duration-300 ${
           isRecording ? 'opacity-100' : 'opacity-50'
         }`}
-        style={{ height: '80px' }}
+        style={{ height: '80px', background: 'transparent' }}
       />
       {isRecording && (
         <div className="text-center mt-2">

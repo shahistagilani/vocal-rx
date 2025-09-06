@@ -27,10 +27,10 @@ export const RecordingInterface = ({
 
         {/* Prompt Text */}
         <div className="mb-6">
-          <h3 className="text-lg font-medium mb-2">Not sure what to say?</h3>
+          <h3 className="text-lg font-medium mb-2">Ready to dictate?</h3>
           <p className="text-sm opacity-90 leading-relaxed">
-            Try talking about your patient's symptoms and diagnosis. Don't be afraid 
-            to ramble (Vocal RX will clean things up)!
+            Describe the patient's chief complaints, clinical findings, diagnosis, 
+            and treatment plan. Speak naturally - our AI will structure your notes professionally.
           </p>
         </div>
 
