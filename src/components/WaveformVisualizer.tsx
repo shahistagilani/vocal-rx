@@ -83,9 +83,9 @@ export const WaveformVisualizer = ({
           ctx.clearRect(0, 0, width, height)
           
           // Draw vertical bars
-          const barCount = 40 // Number of bars to display
-          const barWidth = 3
-          const barSpacing = (width - (barCount * barWidth)) / (barCount - 1)
+          const barCount = 60 // Number of bars to display (increased for more density)
+          const barWidth = 2
+          const barSpacing = 1 // Reduced spacing for closer bars
           
           ctx.fillStyle = '#ffffff'
           
