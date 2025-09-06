@@ -286,7 +286,7 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
           <div className="space-y-6">
             {/* Recording Controls */}
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Voice Recording</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Hello Doctor!</h2>
               
               {!isRecording && !isProcessing && !showTranscript && (
                 <div className="space-y-4">
@@ -298,7 +298,7 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
                     <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
-                    View Patient Context
+                    View Patient Information
                   </button>
 
                   {/* Start Recording Button */}
@@ -309,7 +309,7 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
                     <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                     </svg>
-                    Start Recording
+                    Start Recording the Prescription
                   </button>
                 </div>
               )}

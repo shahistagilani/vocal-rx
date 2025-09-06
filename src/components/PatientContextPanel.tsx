@@ -73,7 +73,7 @@ export default function PatientContextPanel({ isOpen, onClose, patientData }: Pa
                   <svg className="w-5 h-5 text-yellow-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
                   </svg>
-                  Known Conditions
+                  Known Medical Conditions
                 </h4>
                 <div className="space-y-2">
                   {patientData.conditions.map((condition, index) => (
@@ -93,7 +93,7 @@ export default function PatientContextPanel({ isOpen, onClose, patientData }: Pa
                   <svg className="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                   </svg>
-                  Latest Vitals
+                  Vitals
                 </h4>
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
@@ -128,7 +128,7 @@ export default function PatientContextPanel({ isOpen, onClose, patientData }: Pa
                   <svg className="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
-                  Recent Lab Results
+                  Lab Results
                 </h4>
                 <div className="space-y-3">
                   {patientData.labResults.map((lab, index) => (
@@ -158,7 +158,7 @@ export default function PatientContextPanel({ isOpen, onClose, patientData }: Pa
         {/* Footer */}
         <div className="px-6 py-4 bg-gray-50 rounded-b-xl">
           <p className="text-sm text-gray-600 text-center">
-            Patient context will remain available during prescription recording
+            Your Trusted Medical Care Partner
           </p>
         </div>
       </div>
