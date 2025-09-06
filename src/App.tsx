@@ -4,6 +4,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import { Mic, Square, FileText, X, UserCheck, Plus, Minus } from 'lucide-react'
 import { useState, useRef } from 'react'
+import { WaveformVisualizer } from '@/components/WaveformVisualizer'
 
 function App() {
   const [isRecording, setIsRecording] = useState(false)
@@ -44,10 +45,12 @@ function App() {
   }
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioChunksRef = useRef<Blob[]>([])
+  const mediaStreamRef = useRef<MediaStream | null>(null)
 
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      mediaStreamRef.current = stream
       const mediaRecorder = new MediaRecorder(stream)
       mediaRecorderRef.current = mediaRecorder
       audioChunksRef.current = []
@@ -60,6 +63,7 @@ function App() {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' })
         await uploadAudio(audioBlob)
         stream.getTracks().forEach(track => track.stop())
+        mediaStreamRef.current = null
       }
 
       mediaRecorder.start()
@@ -250,6 +254,23 @@ ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN')} or
           Dictate a prescription. We structure it instantly. Edit and export in seconds.
         </p>
       </section>
+
+      {/* Waveform Visualizer */}
+      {(isRecording || isProcessing) && (
+        <section className="container mx-auto px-6 pb-8">
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-slate-800 mb-4 text-center">
+                {isRecording ? 'Recording Audio' : 'Processing Audio'}
+              </h3>
+              <WaveformVisualizer 
+                isRecording={isRecording}
+                mediaStream={mediaStreamRef.current}
+              />
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Transcript Display */}
       {showTranscript && (
