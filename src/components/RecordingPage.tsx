@@ -734,7 +734,7 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
         ` : ''}
 
         <div class="section">
-            <div class="section-title">Prescription</div>
+            <div class="section-title">Medications</div>
             <div class="medicines">
                 ${editedData.medicines?.length > 0 
                     ? editedData.medicines.map((med: any, index: number) => `
@@ -759,7 +759,7 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
 
         ${(editedData.advice?.diet || editedData.advice?.exercise || editedData.advice?.sleep || editedData.advice?.other) ? `
         <div class="section">
-            <div class="section-title">Patient Instructions</div>
+            <div class="section-title">Patient Care Advice</div>
             <div class="instructions">
                 <ul style="margin: 0; padding-left: 20px;">
                     ${editedData.advice?.diet ? `<li><strong>Diet:</strong> ${editedData.advice.diet}</li>` : ''}
@@ -772,7 +772,7 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
         ` : ''}
 
         <div class="section">
-            <div class="section-title">Follow-up Instructions</div>
+            <div class="section-title">Follow-up Date</div>
             <p>Follow-up on: <strong>${editedData.followup_date || 'As needed'}</strong></p>
         </div>
 
