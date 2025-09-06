@@ -1,4 +1,5 @@
-import { useState, useRef } from 'react'
+import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { RecordingInterface } from './RecordingInterface'
 import { useTimer } from '../hooks/useTimer'
 import PatientInfoSidebar from './PatientInfoSidebar'
@@ -15,8 +16,7 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
   const [hasExtracted, setHasExtracted] = useState(false)
   const [isExtracting, setIsExtracting] = useState(false)
   const [showTranscript, setShowTranscript] = useState(false)
-  const [showPrescriptionActions, setShowPrescriptionActions] = useState(false)
-  const [prescriptionHtml, setPrescriptionHtml] = useState('')
+  const navigate = useNavigate();
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioChunksRef = useRef<Blob[]>([])
@@ -782,9 +782,8 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
 </body>
 </html>`
 
-    // Set the prescription HTML and show actions
-    setPrescriptionHtml(prescriptionTemplate)
-    setShowPrescriptionActions(true)
+    // Navigate to the prescription preview page
+    navigate('/prescription-preview', { state: { prescriptionHtml: prescriptionTemplate } });
   }
 
   const handleAdviceChange = (field: string, value: string) => {
@@ -1147,43 +1146,11 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    {showPrescriptionActions ? 'Prescription Ready' : 'E-Sign & Approve'}
+                    E-Sign & Approve
                   </button>
-                  {showPrescriptionActions ? (
-                    <div className="flex space-x-2">
-                      <button 
-                        onClick={() => {
-                          const printWindow = window.open('', '', 'width=900,height=600')
-                          printWindow?.document.write(prescriptionHtml)
-                          printWindow?.document.close()
-                          printWindow?.focus()
-                          printWindow?.print()
-                        }}
-                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
-                      >
-                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                        </svg>
-                        Print
-                      </button>
-                      <button 
-                        onClick={() => {
-                          // TODO: Implement email functionality
-                          alert('Email functionality will be implemented here')
-                        }}
-                        className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
-                      >
-                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
-                        Email
-                      </button>
-                    </div>
-                  ) : (
-                    <button className="flex-1 border border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold py-3 px-6 rounded-lg transition-colors">
-                      Save Draft
-                    </button>
-                  )}
+                  <button className="flex-1 border border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold py-3 px-6 rounded-lg transition-colors">
+                    Save Draft
+                  </button>
                 </div>
               </div>
             )}
