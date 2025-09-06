@@ -186,8 +186,28 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
       if (!transcribedText) {
         throw new Error('No transcript received')
       }
-      
-      setTranscript(prev => prev ? prev + '\n\n' + transcribedText : transcribedText)
+      // Refine transcript via Gemini endpoint to standardize and clean up medical content
+      let refinedText = ''
+      try {
+        const refineResp = await fetch('/api/refine-transcript', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ transcript: transcribedText }),
+        })
+        if (refineResp.ok) {
+          const refineData = await refineResp.json()
+          refinedText = (refineData.refined || '').trim()
+        } else {
+          console.error('Refinement request failed')
+        }
+      } catch (e) {
+        console.error('Error refining transcript:', e)
+      }
+
+      const finalText = refinedText || transcribedText
+      setTranscript(prev => prev ? prev + '\n\n' + finalText : finalText)
       setShowTranscript(true)
       setIsProcessing(false)
     } catch (error) {
