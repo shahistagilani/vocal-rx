@@ -1,28 +1,28 @@
 import { RotateCcw, X } from 'lucide-react'
 import { WaveformVisualizer } from './WaveformVisualizer'
-import { useTimer } from '../hooks/useTimer'
 
 interface RecordingInterfaceProps {
   isRecording: boolean
-  mediaStream?: MediaStream | null
+  time: string
   onRestart: () => void
   onStop: () => void
+  analyser?: AnalyserNode | null
 }
 
 export const RecordingInterface = ({
   isRecording,
-  mediaStream,
+  time,
   onRestart,
-  onStop
+  onStop,
+  analyser
 }: RecordingInterfaceProps) => {
-  const { formattedTime } = useTimer(isRecording)
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <div className="bg-orange-400 rounded-3xl p-8 w-full max-w-md text-white text-center relative">
         {/* Timer */}
         <div className="text-4xl font-light mb-4">
-          {formattedTime}
+          {time}
         </div>
 
         {/* Prompt Text */}
@@ -35,10 +35,10 @@ export const RecordingInterface = ({
         </div>
 
         {/* Waveform Visualizer */}
-        <div className="mb-6 h-16">
+        <div className="mb-6">
           <WaveformVisualizer 
             isRecording={isRecording}
-            mediaStream={mediaStream}
+            analyser={analyser}
           />
         </div>
 

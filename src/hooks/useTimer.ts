@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 
-export const useTimer = (isActive: boolean) => {
+export const useTimer = () => {
   const [seconds, setSeconds] = useState(0)
+  const [isActive, setIsActive] = useState(false)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
@@ -23,8 +24,17 @@ export const useTimer = (isActive: boolean) => {
     }
   }, [isActive])
 
+  const start = () => {
+    setIsActive(true)
+  }
+
+  const stop = () => {
+    setIsActive(false)
+  }
+
   const reset = () => {
     setSeconds(0)
+    setIsActive(false)
   }
 
   const formatTime = (totalSeconds: number) => {
@@ -34,8 +44,10 @@ export const useTimer = (isActive: boolean) => {
   }
 
   return {
+    time: formatTime(seconds),
     seconds,
-    formattedTime: formatTime(seconds),
+    start,
+    stop,
     reset
   }
 }

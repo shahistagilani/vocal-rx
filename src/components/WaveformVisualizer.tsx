@@ -2,12 +2,12 @@ import { useEffect, useRef } from 'react'
 
 interface WaveformVisualizerProps {
   isRecording: boolean
-  mediaStream?: MediaStream | null
+  analyser?: AnalyserNode | null
 }
 
 export const WaveformVisualizer = ({ 
   isRecording, 
-  mediaStream
+  analyser
 }: WaveformVisualizerProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const audioContextRef = useRef<AudioContext | null>(null)
@@ -17,7 +17,7 @@ export const WaveformVisualizer = ({
 
   // Setup live audio visualization
   useEffect(() => {
-    if (!isRecording || !mediaStream) {
+    if (!isRecording || !analyser) {
       // Clean up when not recording
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current)
@@ -49,19 +49,8 @@ export const WaveformVisualizer = ({
 
         ctx.scale(window.devicePixelRatio, window.devicePixelRatio)
 
-        // Create audio context and analyser
-        const audioContext = new AudioContext()
-        const analyser = audioContext.createAnalyser()
-        const source = audioContext.createMediaStreamSource(mediaStream)
-        
-        analyser.fftSize = 2048
-        analyser.smoothingTimeConstant = 0.3
-        
-        source.connect(analyser)
-        
-        audioContextRef.current = audioContext
+        // Use the provided analyser
         analyserRef.current = analyser
-        sourceRef.current = source
 
         const bufferLength = analyser.frequencyBinCount
         const dataArray = new Uint8Array(bufferLength)
