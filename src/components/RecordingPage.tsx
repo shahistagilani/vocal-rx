@@ -211,7 +211,6 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
           gender: mockPatientData.gender,
           conditions: mockPatientData.conditions
         },
-        originalTranscript: transcript
       }
       setEditedData(prescriptionWithPatient)
       setHasExtracted(true)
@@ -399,8 +398,8 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
     </div>
 
     <div class="signature-section">
-        <div style="margin-top: 50px; border-top: 1px solid #333; width: 200px; margin-left: auto;">
-            <div style="text-align: center; margin-top: 10px;">
+        <div class="signature-box">
+            <div style="text-align: center;">
                 <strong>${mockDoctorData.signature}</strong><br>
                 <small>Digital Signature</small>
             </div>
