@@ -1,6 +1,6 @@
-import { VercelRequest, VercelResponse } from '@vercel/node'
+import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+module.exports = async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
@@ -74,8 +74,15 @@ You are a medical scribe assistant. Given a raw dictation transcript from a doct
 
     const data = await response.json()
 
-    // Extract text from Gemini response
-    const refinedText: string = data.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join('') || ''
+    // Extract text from Gemini response with fallback
+    let refinedText: string = ''
+    const parts = data.candidates?.[0]?.content?.parts
+    if (Array.isArray(parts) && parts.length > 0) {
+      refinedText = parts.map((p: any) => p?.text || '').join('')
+    }
+    if (!refinedText && typeof data.candidates?.[0]?.content?.parts?.[0]?.text === 'string') {
+      refinedText = data.candidates[0].content.parts[0].text
+    }
 
     if (!refinedText) {
       return res.status(500).json({ error: 'No refined text generated' })
