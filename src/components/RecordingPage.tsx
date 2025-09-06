@@ -52,10 +52,10 @@ export default function RecordingPage({ onBackToHome }: RecordingPageProps) {
 
   // Mock doctor and clinic data
   const mockDoctorData = {
-    name: 'Dr. Sarah Johnson',
+    name: 'Dr. Sara Manji',
     qualification: 'MBBS, MD (Internal Medicine)',
     registrationNumber: 'MCI-12345-2018',
-    signature: 'Dr. Sarah Johnson'
+    signature: 'Dr. Sara Manji'
   }
 
   const mockClinicData = {
