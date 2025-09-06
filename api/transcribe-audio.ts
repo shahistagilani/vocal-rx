@@ -1,5 +1,12 @@
 import { VercelRequest, VercelResponse } from '@vercel/node'
 
+// Configure to receive raw body
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
@@ -11,8 +18,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({ error: 'Deepgram API key not configured' })
     }
 
-    // Get the audio data from the request
-    const audioBuffer = Buffer.from(req.body)
+    // Read raw body data
+    const chunks: Buffer[] = []
+    
+    await new Promise((resolve, reject) => {
+      req.on('data', (chunk: Buffer) => {
+        chunks.push(chunk)
+      })
+      
+      req.on('end', () => {
+        resolve(null)
+      })
+      
+      req.on('error', (error) => {
+        reject(error)
+      })
+    })
+    
+    const audioBuffer = Buffer.concat(chunks)
+    
+    if (audioBuffer.length === 0) {
+      return res.status(400).json({ error: 'No audio data received' })
+    }
 
     // Call Deepgram API
     const deepgramResponse = await fetch(
